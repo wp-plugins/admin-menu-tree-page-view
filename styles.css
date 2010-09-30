@@ -1,0 +1,100 @@
+
+#adminmenu li ul.bonny_tree ul li a {
+	background-image: none !important;
+	border-left-width: 1px;
+	border-left-style: solid;
+	background: transparent url(page_white_text.png) no-repeat 5px 1px !important;
+	padding-left: 25px;
+}
+#adminmenu li.wp-has-current-submenu ul.bonny_tree {
+	border-bottom-width: 0;
+}
+li.toplevel_page_bonny_tree_main .wp-first-item {
+	display: none;
+}
+
+li.toplevel_page_bonny_tree_main .wp-submenu a {
+	background-image: none;
+}
+
+
+#adminmenu li.wp-has-current-submenu ul.bonny_tree {
+	border-left: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+	padding-top: 5px;
+}
+
+#adminmenu li .wp-submenu ul.bonny_tree li a {
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-right-width: 1px;
+	border-right-style: solid;
+
+	background: transparent url(page_white_text.png) no-repeat 5px 1px !important;
+	padding-left: 25px;
+}
+
+#adminmenu li .wp-submenu ul.bonny_tree li a:hover {
+	background-color: #eaf2fa !important;
+}
+
+#adminmenu li.wp-has-current-submenu ul.bonny_tree li a {
+	border-left-width: 0;
+	border-right-width: 0;
+}
+
+#adminmenu li.wp-has-current-submenu ul li a {
+}
+
+li.bonny_tree_headline {
+	text-transform: uppercase;
+	color: #666;
+	font-size: 9px;
+	margin: 0 0 0 6px !important;
+}
+
+/* child-pages */
+#adminmenu li .wp-submenu ul.bonny_tree li ul {
+	border-bottom: none;
+}
+#adminmenu li .wp-submenu ul.bonny_tree li ul li a,
+#adminmenu li .wp-submenu ul.bonny_tree li ul li a:hover
+ {
+	padding-left: 35px;
+	background-position: 15px 1px !important;
+	font-weight: normal;
+	color: #21759B;
+}
+
+#adminmenu li .wp-submenu ul.bonny_tree li ul li li a,
+#adminmenu li .wp-submenu ul.bonny_tree li ul li li a:hover
+ {
+	padding-left: 45px;
+	background-position: 25px 1px !important;
+	font-weight: normal;
+	color: #21759B;
+}
+
+#adminmenu li .wp-submenu ul.bonny_tree li ul li li li a,
+#adminmenu li .wp-submenu ul.bonny_tree li ul li li li a:hover
+ {
+	padding-left: 55px;
+	background-position: 35px 1px !important;
+	font-weight: normal;
+	color: #21759B;
+}
+
+
+/* make them bold too */
+#adminmenu li .wp-submenu ul.bonny_tree li ul li.current a,
+#adminmenu li .wp-submenu ul.bonny_tree li ul li.current a:hover
+ {
+	font-weight: bold;
+	color: black;
+}
+#adminmenu li .wp-submenu ul.bonny_tree li ul li.current li a,
+#adminmenu li .wp-submenu ul.bonny_tree li ul li.current li a:hover
+ {
+	font-weight: normal;
+}
+
