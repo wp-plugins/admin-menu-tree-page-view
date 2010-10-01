@@ -1,4 +1,4 @@
-=== CMS Tree Page View ===
+=== Admin Menu Tree Page View ===
 Contributors: eskapism
 Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
