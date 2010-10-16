@@ -10,7 +10,8 @@ Get a tree view of all your pages directly in the admin menu. All pages is avail
 
 == Description ==
 
-Get a tree view of all your pages directly in the admin menu. All pages is available just one click away!
+This WordPress plugin adds all your pages to the admin menu, so all your pages will always be available within just one click.
+Works best with CMS-like installations with lots of pages.
 
 #### Donation and more plugins
 * If you like this plugin don't forget to [donate to support further development](http://eskapism.se/sida/donate/).
