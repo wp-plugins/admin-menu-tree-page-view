@@ -13,7 +13,11 @@ Get a tree view of all your pages directly in the admin menu. Edit, view and add
 This WordPress plugin adds all your pages to the admin menu, so all your pages will always be available within just one click.
 You can also add pages directly in the tree.
 
-Probably most suitable for CMS-like installations with lots of pages.
+Works perfect in CMS-like WordPress installations with lots of pages.
+
+#### More advanced page tree with drag-and-drop support
+I have made an even more advanced version of the tree, where you also can search and re-order the pages. It's called 
+[CMS Tree Page View](http://wordpress.org/extend/plugins/cms-tree-page-view/).
 
 #### Donation and more plugins
 * If you like this plugin don't forget to [donate to support further development](http://eskapism.se/sida/donate/).
