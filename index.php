@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Adds a tree of all your pages or custom posts. Use drag & drop to reorder your pages, and edit, view, add, and search your pages.
-Version: 0.2
+Version: 0.3
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -36,8 +36,9 @@ add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_v
 
 function admin_menu_tree_page_view_admin_init() {
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
-	define( "admin_menu_tree_page_view_VERSION", "0.2" );
-	wp_enqueue_style( "admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION );
+	define( "admin_menu_tree_page_view_VERSION", "0.3" );
+	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
+	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
 }
 
 function admin_menu_tree_page_view_admin_head() {
@@ -159,8 +160,48 @@ function admin_menu_tree_page_view_admin_head() {
 				
 			});
 			
+			// search/filter pages
+			$(".admin-menu-tree-page-filter input").keyup(function(e) {
+				var ul = $(this).closest(".admin-menu-tree-page-tree");
+				ul.find("li").hide();
+				ul.find(".admin-menu-tree-page-tree_headline,.admin-menu-tree-page-filter").show();
+				var s = $(this).val();
+				var selector = "li:AminMenuTreePageContains('"+s+"')";
+				var hits = ul.find(selector);
+				if (hits.length > 0 || s != "") {
+					ul.find(".admin-menu-tree-page-filter-reset").fadeIn("fast");
+					ul.unhighlight();
+				}
+				if (s == "") {
+					ul.find(".admin-menu-tree-page-filter-reset").fadeOut("fast");
+				}
+				ul.highlight(s);
+				hits.show();
+				
+			});
+
+			// clear/reset filter and show all pages again
+			$(".admin-menu-tree-page-filter-reset").click(function() {
+				var $t = $(this);
+				var ul = $t.closest(".admin-menu-tree-page-tree");
+				ul.find("li").fadeIn("fast");
+				$t.fadeOut("fast");
+				$t.closest(".admin-menu-tree-page-filter").find("input").val("").focus();
+				ul.unhighlight();
+			});
 			
+			// label = hide in and focus input
+			$(".admin-menu-tree-page-filter label").click(function() {
+				var $t = $(this);
+				$t.hide();
+				$t.closest(".admin-menu-tree-page-filter").find("input").focus();
+			});
+
 		});
+		// http://stackoverflow.com/questions/187537/is-there-a-case-insensitive-jquery-contains-selector
+		jQuery.expr[':'].AminMenuTreePageContains = function(a,i,m){
+		     return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
+		};
 		
 	</script>
 	
@@ -185,7 +226,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 	$args = wp_parse_args( $args, $defaults );
 
 	$pages = get_posts($args);
-	#bonny_d($pages);
+	$output = "";
 	foreach ($pages as $one_page) {
 		$edit_link = get_edit_post_link($one_page->ID);
 		$title = get_the_title($one_page->ID);
@@ -201,7 +242,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>{$one_page->post_status}</span>";
 		}
 
-		$output .= "<li class='$class $css_status'>";
+		$output .= "<li class='$class'>";
 		$output .= "<a href='$edit_link'>$status_span";
 		$output .= $title;
 
@@ -222,7 +263,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 	}
 	
 	// if this is a child listing, add ul
-	if ($args["child_of"]) {
+	if (isset($args["child_of"]) && $args["child_of"]) {
 		$output = "<ul class='admin-menu-tree-page-tree_childs'>$output</ul>";
 	}
 	
@@ -239,6 +280,11 @@ function admin_menu_tree_page_view_admin_menu() {
 		</a>
 		<ul class='admin-menu-tree-page-tree'>
 		<li class='admin-menu-tree-page-tree_headline'>Pages</li>
+		<li class='admin-menu-tree-page-filter'>
+			<label>Search/Filter pages</label>
+			<input type='text' class='' />
+			<div class='admin-menu-tree-page-filter-reset' title='Reset filter and show all pages'></div>
+		</li>
 		";
 
 	// get root items

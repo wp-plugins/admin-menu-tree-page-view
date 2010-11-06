@@ -78,7 +78,9 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png);
 }
 
-li.admin-menu-tree-page-tree_headline {
+li.admin-menu-tree-page-tree_headline,
+li.admin-menu-tree-page-filter
+ {
 	text-transform: uppercase;
 	color: #666;
 	font-size: 9px;
@@ -90,7 +92,9 @@ li.admin-menu-tree-page-tree_headline {
 	border-right-width: 1px;
 }
 
-.wp-has-current-submenu li.admin-menu-tree-page-tree_headline {
+.wp-has-current-submenu li.admin-menu-tree-page-tree_headline,
+.wp-has-current-submenu li.admin-menu-tree-page-filter
+ {
 	border-left-width: 0px;
 	border-right-width: 0px;
 }
@@ -207,4 +211,39 @@ li.admin-menu-tree-page-tree_headline {
 	height: 11px;
 	float: left;
 	background: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -194px -98px;
+}
+
+.admin-menu-tree-page-filter {
+	position: relative;
+}
+.admin-menu-tree-page-filter input {
+	width: 125px;
+	font-size: 10px;
+	line-height: 1em;
+	padding: 2px;
+}
+
+.admin-menu-tree-page-filter-reset {
+	display: none;
+	width: 16px;
+	height: 16px;
+	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -32px -194px;	
+	position: absolute;
+	top: 5px;
+	right: 15px;
+}
+.admin-menu-tree-page-filter-reset:hover {
+	background-image:url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png)
+}
+.admin-menu-tree-page-filter label {
+	color: #BBBBBB;
+    left: 13px;
+    position: absolute;
+    top: 5px;
+    cursor: text;
+}
+
+ul.admin-menu-tree-page-tree .highlight {
+	background-color: #fff879;
+	color: #21759B;
 }

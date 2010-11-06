@@ -11,9 +11,9 @@ Get a tree view of all your pages directly in the admin menu. Edit, view and add
 == Description ==
 
 This WordPress plugin adds all your pages to the admin menu, so all your pages will always be available within just one click.
-You can also add pages directly in the tree.
+You can also add pages directly in the tree and you get a search box so you quickly can find the article/page you're looking for.
 
-Works perfect in CMS-like WordPress installations with lots of pages.
+Works perfect in CMS-like WordPress installations with lots of pages in a tree hierarchy.
 
 #### More advanced page tree with drag-and-drop support
 I have made an even more advanced version of the tree, where you also can search and re-order the pages. It's called 
@@ -38,10 +38,13 @@ Now the tree with the pages will be visible both on the dashboard and in the men
 
 == Changelog ==
 
+= 0.3 =
+- Removed some notices
+- Added a search/filter box. Search your pages in real time. I love it! :)
+
 = 0.2 =
 - Some CSS changes. The icons and text and smaller now. I think it's better this way, you can fit so many more pages in the tree now.
 - Now you can add new pages below or as a child to a page. For me this has been the feature I've missed the most.
 
 = 0.1 =
 - It's alive!
-
