@@ -35,6 +35,7 @@ Now the tree with the pages will be visible both on the dashboard and in the men
 
 1. The menu page tree with all your pages. Pretty neat, eh?
 2. Since version 0.2 you can easily add new pages too. This will make you a page kung fu master.
+3. Search your pages in real time. Try it; it's wonderful! ;)
 
 == Changelog ==
 
