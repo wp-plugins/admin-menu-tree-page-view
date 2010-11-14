@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Adds a tree of all your pages or custom posts. Use drag & drop to reorder your pages, and edit, view, add, and search your pages.
-Version: 0.3
+Version: 0.5
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -29,188 +29,35 @@ License: GPL2
 Admin Menu Tree Page View
 admin-menu-tree-page-view
 */
-add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_head", "admin_menu_tree_page_view_admin_head");
+add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
 add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_view_add_page');
 
 function admin_menu_tree_page_view_admin_init() {
+
+	define( "admin_menu_tree_page_view_VERSION", "0.5" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
-	define( "admin_menu_tree_page_view_VERSION", "0.3" );
+
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
 	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
+	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
+
+	$oLocale = array(
+		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
+		"View" => __("View", 'admin-menu-tree-page-view'),
+		"Add_new_page_here" => __("Add new page here", 'admin-menu-tree-page-view'),
+		"Add_new_page_inside" => __("Add new page inside", 'admin-menu-tree-page-view'),
+		"Untitled" => __("Untitled", 'admin-menu-tree-page-view'),
+	);
+	wp_localize_script( "admin_menu_tree_page_view", 'amtpv_l10n', $oLocale);
 }
 
 function admin_menu_tree_page_view_admin_head() {
-	?>
-	<script type="text/javascript">
-		jQuery(function($) {
-
-			setTimeout(function() {
-				jQuery("#toplevel_page_admin-menu-tree-page-tree_main").addClass("wp-menu-open");
-			}, 100);
-			
-
-			// show menu when menu icon is clicked
-			jQuery(".admin-menu-tree-page-view-edit").click(function() {
-				
-				var $this = $(this);
-								
-				// check if this tree has a menu div defined
-				var wpsubmenu = $(this).closest("div.wp-submenu");
-				if (wpsubmenu.length == 1) {
-					
-					var div_popup = wpsubmenu.find(".admin-menu-tree-page-view-popup");
-					var do_show = true;
-					if (div_popup.length == 0) {
-						// no menu div yet, create it
-						var html = "";
-						html += "<div class='admin-menu-tree-page-view-popup'><span class='admin-menu-tree-page-view-popup-arrow'></span><span class='admin-menu-tree-page-view-popup-page'></span>";
-						html += "<ul>";
-						html += "<li class='admin-menu-tree-page-view-popup-edit'><a href=''>Edit</a></li>";
-						html += "<li class='admin-menu-tree-page-view-popup-view'><a href=''>View</a></li>";
-						html += "<li class='admin-menu-tree-page-view-popup-add-here'><a href=''>Add new page here</a></li>";
-						html += "<li class='admin-menu-tree-page-view-popup-add-inside'><a href=''>Add new page inside</a></li>";
-						html += "</ul></div>";
-						var div_popup = $(html).appendTo(wpsubmenu);
-						div_popup.show(); // must do this..
-						div_popup.hide(); // ..or fade does not work first time
-					} else {
-						if (div_popup.is(":visible")) {
-							//do_show = false;
-						}
-					}
-					
-					var a = $this.closest("a");
-					var link_text = a.text();
-					if (div_popup.find(".admin-menu-tree-page-view-popup-page").text() == link_text) {
-						do_show = false;
-					}
-					div_popup.find(".admin-menu-tree-page-view-popup-page").text( link_text );
-					var offset = $this.offset();
-					offset.top = (offset.top-3);
-					offset.left = (offset.left-3);
-
-					// store post_id
-					var post_id = a.attr("href").match(/post=([\w]+)/);
-					post_id = post_id[1];
-					div_popup.data("admin-menu-tree-page-view-current-post-id", post_id);
-
-					// setup edit and view links
-					var edit_link = "post.php?post="+post_id+"&action=edit";
-					div_popup.find(".admin-menu-tree-page-view-popup-edit a").attr("href", edit_link);
-					
-					// view link, this is probably not such a safe way to this this. but let's try! :)
-					var view_link = "../?p=" + post_id;
-					div_popup.find(".admin-menu-tree-page-view-popup-view a").attr("href", view_link);
-					
-					if (do_show) {
-						//console.log("show");
-						div_popup.fadeIn("fast");
-					} else {
-						// same popup, so close it
-						//console.log("hide");
-						div_popup.fadeOut("fast");
-						div_popup.find(".admin-menu-tree-page-view-popup-page").text("");
-					}
-					
-					div_popup.offset( offset ); // must be last or position gets wrong somehow
-					
-				}
-				
-				return false;
-			});
-			
-			// hide menu
-			$(".admin-menu-tree-page-view-popup-arrow").live("click", function() {
-				$(this).closest(".admin-menu-tree-page-view-popup").fadeOut("fast");
-				return false;
-			});
-			
-			// add page
-			$(".admin-menu-tree-page-view-popup-add-here, .admin-menu-tree-page-view-popup-add-inside").live("click", function() {
-				var div_popup = $(this).closest(".admin-menu-tree-page-view-popup");
-				var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
-				
-				var type = "after";
-				if ($(this).hasClass("admin-menu-tree-page-view-popup-add-inside")) {
-					type = "inside";
-				}
-				
-				var page_title = prompt("Enter name of new page", "Untitled");
-				if (page_title) {
-					
-					var data = {
-						"action": 'admin_menu_tree_page_view_add_page',
-						"pageID": post_id,
-						"type": type,
-						"page_title": page_title,
-						"post_type": "page"
-					};
-					jQuery.post(ajaxurl, data, function(response) {
-						//alert(response);
-						if (response != "0") {
-							document.location = response;
-						}
-					});
-				
-				} else {
-					return false;
-				}
-				
-			});
-			
-			// search/filter pages
-			$(".admin-menu-tree-page-filter input").keyup(function(e) {
-				var ul = $(this).closest(".admin-menu-tree-page-tree");
-				ul.find("li").hide();
-				ul.find(".admin-menu-tree-page-tree_headline,.admin-menu-tree-page-filter").show();
-				var s = $(this).val();
-				var selector = "li:AminMenuTreePageContains('"+s+"')";
-				var hits = ul.find(selector);
-				if (hits.length > 0 || s != "") {
-					ul.find(".admin-menu-tree-page-filter-reset").fadeIn("fast");
-					ul.unhighlight();
-				}
-				if (s == "") {
-					ul.find(".admin-menu-tree-page-filter-reset").fadeOut("fast");
-				}
-				ul.highlight(s);
-				hits.show();
-				
-			});
-
-			// clear/reset filter and show all pages again
-			$(".admin-menu-tree-page-filter-reset").click(function() {
-				var $t = $(this);
-				var ul = $t.closest(".admin-menu-tree-page-tree");
-				ul.find("li").fadeIn("fast");
-				$t.fadeOut("fast");
-				$t.closest(".admin-menu-tree-page-filter").find("input").val("").focus();
-				ul.unhighlight();
-			});
-			
-			// label = hide in and focus input
-			$(".admin-menu-tree-page-filter label").click(function() {
-				var $t = $(this);
-				$t.hide();
-				$t.closest(".admin-menu-tree-page-filter").find("input").focus();
-			});
-
-		});
-		// http://stackoverflow.com/questions/187537/is-there-a-case-insensitive-jquery-contains-selector
-		jQuery.expr[':'].AminMenuTreePageContains = function(a,i,m){
-		     return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
-		};
-		
-	</script>
-	
-	<?php
 
 }
 
 function admin_menu_tree_page_view_get_pages($args) {
-
 
 	#$pages = get_pages($args);
 
@@ -239,7 +86,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 			$status_span .= "<span class='admin-menu-tree-page-view-protected'></span>";
 		}
 		if ($one_page->post_status != "publish") {
-			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>{$one_page->post_status}</span>";
+			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>".__(ucfirst($one_page->post_status))."</span>";
 		}
 
 		$output .= "<li class='$class'>";
@@ -272,6 +119,8 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 function admin_menu_tree_page_view_admin_menu() {
 
+	load_plugin_textdomain('admin-menu-tree-page-view', false, "/admin-menu-tree-page-view/languages");
+
 	// add main menu
 	#add_menu_page( "title", "Simple Menu Pages", "edit_pages", "admin-menu-tree-page-tree_main", "bonnyFunction", null, 5);
 
@@ -279,11 +128,11 @@ function admin_menu_tree_page_view_admin_menu() {
 	$output = "
 		</a>
 		<ul class='admin-menu-tree-page-tree'>
-		<li class='admin-menu-tree-page-tree_headline'>Pages</li>
+		<li class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</li>
 		<li class='admin-menu-tree-page-filter'>
-			<label>Search/Filter pages</label>
+			<label>".__("Search", 'admin-menu-tree-page-view')."</label>
 			<input type='text' class='' />
-			<div class='admin-menu-tree-page-filter-reset' title='Reset filter and show all pages'></div>
+			<div class='admin-menu-tree-page-filter-reset' title='".__("Reset search and show all pages", 'admin-menu-tree-page-view')."'></div>
 		</li>
 		";
 
@@ -304,14 +153,14 @@ function admin_menu_tree_page_view_admin_menu() {
 	";
 
 	// add subitems to main menu
-	add_submenu_page("edit.php?post_type=page", "Tree View", $output, "edit_pages", "admin-menu-tree-page-tree", "admin_menu_tree_page_page");
+	add_submenu_page("edit.php?post_type=page", "Admin Menu Tree Page View", $output, "edit_pages", "admin-menu-tree-page-tree", "admin_menu_tree_page_page");
 
 }
 
 function admin_menu_tree_page_page() {
 	?>
 	
-	<h2>Simple Admin Menu Tree</h2>
+	<h2>Admin Menu Tree Page View</h2>
 	<p>Nothing to see here. Move along! :)</p>
 	
 	<?php
@@ -344,7 +193,7 @@ function admin_menu_tree_page_view_add_page() {
 	if (!$page_title) { $page_title = __("New page", 'cms-tree-page-view'); }
 
 	$ref_post = get_post($pageID);
-	
+
 	if ("after" == $type) {
 
 		/*
@@ -385,6 +234,7 @@ function admin_menu_tree_page_view_add_page() {
 		$newPostID = wp_insert_post($post_new);
 
 	}
+	
 	if ($newPostID) {
 		// return editlink for the newly created page
 		$editLink = get_edit_post_link($newPostID, '');
