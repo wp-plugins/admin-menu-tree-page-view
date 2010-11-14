@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Adds a tree of all your pages or custom posts. Use drag & drop to reorder your pages, and edit, view, add, and search your pages.
-Version: 0.4
+Version: 0.5
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -29,22 +29,19 @@ License: GPL2
 Admin Menu Tree Page View
 admin-menu-tree-page-view
 */
-add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_head", "admin_menu_tree_page_view_admin_head");
+add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
 add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_view_add_page');
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "0.4" );
+	define( "admin_menu_tree_page_view_VERSION", "0.5" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 
-	load_plugin_textdomain('admin-menu-tree-page-view', false, "/admin-menu-tree-page-view/languages");
-	
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
 	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
-
 
 	$oLocale = array(
 		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
@@ -57,10 +54,10 @@ function admin_menu_tree_page_view_admin_init() {
 }
 
 function admin_menu_tree_page_view_admin_head() {
+
 }
 
 function admin_menu_tree_page_view_get_pages($args) {
-
 
 	#$pages = get_pages($args);
 
@@ -89,7 +86,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 			$status_span .= "<span class='admin-menu-tree-page-view-protected'></span>";
 		}
 		if ($one_page->post_status != "publish") {
-			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>".__($one_page->post_status)."</span>";
+			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>".__(ucfirst($one_page->post_status))."</span>";
 		}
 
 		$output .= "<li class='$class'>";
@@ -122,6 +119,8 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 function admin_menu_tree_page_view_admin_menu() {
 
+	load_plugin_textdomain('admin-menu-tree-page-view', false, "/admin-menu-tree-page-view/languages");
+
 	// add main menu
 	#add_menu_page( "title", "Simple Menu Pages", "edit_pages", "admin-menu-tree-page-tree_main", "bonnyFunction", null, 5);
 
@@ -129,11 +128,11 @@ function admin_menu_tree_page_view_admin_menu() {
 	$output = "
 		</a>
 		<ul class='admin-menu-tree-page-tree'>
-		<li class='admin-menu-tree-page-tree_headline'>" . __("Pages", "admin-menu-tree-page-view") . "</li>
+		<li class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</li>
 		<li class='admin-menu-tree-page-filter'>
-			<label>".__("Search", "admin-menu-tree-page-view")."</label>
+			<label>".__("Search", 'admin-menu-tree-page-view')."</label>
 			<input type='text' class='' />
-			<div class='admin-menu-tree-page-filter-reset' title='".__("Reset search and show all pages", "admin-menu-tree-page-view")."'></div>
+			<div class='admin-menu-tree-page-filter-reset' title='".__("Reset search and show all pages", 'admin-menu-tree-page-view')."'></div>
 		</li>
 		";
 

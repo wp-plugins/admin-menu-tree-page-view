@@ -39,6 +39,10 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Changelog ==
 
+= 0.5 =
+- Swedish translation added
+- Moved load_plugin_textdomain to action "menu" instead of "init"
+
 = 0.4 =
 - Fixed a couple of small bugs
 - Prepare for translation
