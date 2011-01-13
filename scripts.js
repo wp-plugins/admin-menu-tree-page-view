@@ -56,7 +56,7 @@ jQuery(function($) {
 			div_popup.find(".admin-menu-tree-page-view-popup-edit a").attr("href", edit_link);
 			
 			// view link, this is probably not such a safe way to this this. but let's try! :)
-			var view_link = "../?p=" + post_id;
+			var view_link = $this.closest("li").find(".admin-menu-tree-page-view-view-link").text();
 			div_popup.find(".admin-menu-tree-page-view-popup-view a").attr("href", view_link);
 			
 			if (do_show) {

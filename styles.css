@@ -78,6 +78,11 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png);
 }
 
+#adminmenu li ul.admin-menu-tree-page-tree a .admin-menu-tree-page-view-view-link {
+	display: none;
+}
+
+
 li.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-filter
  {
@@ -247,3 +252,4 @@ ul.admin-menu-tree-page-tree .highlight {
 	background-color: #fff879;
 	color: #21759B;
 }
+

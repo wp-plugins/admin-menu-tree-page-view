@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Adds a tree of all your pages or custom posts. Use drag & drop to reorder your pages, and edit, view, add, and search your pages.
-Version: 0.5
+Version: 0.6
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -36,7 +36,7 @@ add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_v
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "0.5" );
+	define( "admin_menu_tree_page_view_VERSION", "0.6" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
@@ -93,6 +93,11 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "<a href='$edit_link'>$status_span";
 		$output .= $title;
 
+		
+		// add the view link, hidden, used in popup
+		$permalink = get_permalink($one_page->ID);
+		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
+		
 		$output .= "<span class='admin-menu-tree-page-view-edit'></span>";
 
 		$output .= "</a>";

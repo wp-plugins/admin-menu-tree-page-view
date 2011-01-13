@@ -39,6 +39,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Changelog ==
 
+= 0.6 =
+- View link now uses wordpress function get_permalinks(). Previously you could get non-working links.
+
 = 0.5 =
 - Swedish translation added
 - Moved load_plugin_textdomain to action "menu" instead of "init"
