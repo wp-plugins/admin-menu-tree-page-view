@@ -4,7 +4,6 @@ jQuery(function($) {
 	setTimeout(function() {
 		jQuery("#toplevel_page_admin-menu-tree-page-tree_main").addClass("wp-menu-open");
 	}, 100);
-	
 
 	// show menu when menu icon is clicked
 	jQuery(".admin-menu-tree-page-view-edit").click(function() {
@@ -60,11 +59,9 @@ jQuery(function($) {
 			div_popup.find(".admin-menu-tree-page-view-popup-view a").attr("href", view_link);
 			
 			if (do_show) {
-				//console.log("show");
 				div_popup.fadeIn("fast");
 			} else {
 				// same popup, so close it
-				//console.log("hide");
 				div_popup.fadeOut("fast");
 				div_popup.find(".admin-menu-tree-page-view-popup-page").text("");
 			}
@@ -151,7 +148,55 @@ jQuery(function($) {
 		$t.closest(".admin-menu-tree-page-filter").find("input").focus();
 	});
 
+	var trees = jQuery(".admin-menu-tree-page-tree");
+	
+	// add links to expand/collapse
+	trees.find(".admin-menu-tree-page-view-has-childs").prepend("<div class='admin-menu-tree-page-expand' title='Show/Hide child pages' />");
+	trees.find(".admin-menu-tree-page-expand").live("click", function(e) {
+		
+		e.preventDefault();
+		var $t = $(this);
+		var $li = $t.closest("li");
+		var $a = $li.find("a:first");
+		var $ul = $li.find("ul:first");
+		
+		var isOpen = false;
+		if ($ul.is(":visible")) {
+			$ul.slideUp(function() {
+				$li.addClass("admin-menu-tree-page-view-closed").removeClass("admin-menu-tree-page-view-opened");
+			});
+			
+		} else {
+			$ul.slideDown(function() {
+				$li.addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
+			});
+			isOpen = true;
+		}
+
+		var post_id = $a.attr("href").match(/\?post=([\d]+)/)[1];
+		var array_pos = $.inArray(post_id, admin_menu_tree_page_view_opened_posts);
+		if (array_pos > -1) {
+			// did exist in cookie
+			admin_menu_tree_page_view_opened_posts = admin_menu_tree_page_view_opened_posts.splice(array_pos+1, 1);
+		}
+		// array now has not our post_id. so add it if visible/open
+		if (isOpen) {
+			admin_menu_tree_page_view_opened_posts.push(post_id);
+		}
+		jQuery.cookie('admin-menu-tree-page-view-open-posts', admin_menu_tree_page_view_opened_posts.join(","));
+
+	});
+
+
 });
+
+// array with all post ids that are open
+var admin_menu_tree_page_view_opened_posts = jQuery.cookie('admin-menu-tree-page-view-open-posts') || "";
+admin_menu_tree_page_view_opened_posts = admin_menu_tree_page_view_opened_posts.split(",");
+if (admin_menu_tree_page_view_opened_posts[0] == "") {
+//	admin_menu_tree_page_view_opened_posts = [];
+}
+
 // http://stackoverflow.com/questions/187537/is-there-a-case-insensitive-jquery-contains-selector
 jQuery.expr[':'].AminMenuTreePageContains = function(a,i,m){
      return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;

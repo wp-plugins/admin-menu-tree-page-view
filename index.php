@@ -2,8 +2,8 @@
 /*
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
-Description: Adds a tree of all your pages or custom posts. Use drag & drop to reorder your pages, and edit, view, add, and search your pages.
-Version: 0.6
+Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
+Version: 1.0
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -25,10 +25,6 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*
-Admin Menu Tree Page View
-admin-menu-tree-page-view
-*/
 add_action("admin_head", "admin_menu_tree_page_view_admin_head");
 add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
@@ -36,18 +32,20 @@ add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_v
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "0.6" );
+	define( "admin_menu_tree_page_view_VERSION", "1.0" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
 	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
+	wp_enqueue_script( "jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
+
 
 	$oLocale = array(
 		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
 		"View" => __("View", 'admin-menu-tree-page-view'),
-		"Add_new_page_here" => __("Add new page here", 'admin-menu-tree-page-view'),
-		"Add_new_page_inside" => __("Add new page inside", 'admin-menu-tree-page-view'),
+		"Add_new_page_here" => __("New page here", 'admin-menu-tree-page-view'),
+		"Add_new_page_inside" => __("New page inside", 'admin-menu-tree-page-view'),
 		"Untitled" => __("Untitled", 'admin-menu-tree-page-view'),
 	);
 	wp_localize_script( "admin_menu_tree_page_view", 'amtpv_l10n', $oLocale);
@@ -58,8 +56,6 @@ function admin_menu_tree_page_view_admin_head() {
 }
 
 function admin_menu_tree_page_view_get_pages($args) {
-
-	#$pages = get_pages($args);
 
 	$defaults = array(
     	"post_type" => "page",
@@ -74,9 +70,18 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 	$pages = get_posts($args);
 	$output = "";
+	$str_child_output = "";
 	foreach ($pages as $one_page) {
 		$edit_link = get_edit_post_link($one_page->ID);
 		$title = get_the_title($one_page->ID);
+		
+		// add num of children to the title
+		$post_children = get_children($one_page->ID);
+		$post_children_count = sizeof($post_children);
+		if ($post_children_count>0) {
+			$title .= " <span class='child-count'>($post_children_count)</span>";
+		}
+		
 		$class = "";
 		if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["post"]) && $_GET["post"] == $one_page->ID) {
 			$class = "current";
@@ -89,11 +94,32 @@ function admin_menu_tree_page_view_get_pages($args) {
 			$status_span .= "<span class='admin-menu-tree-page-view-status admin-menu-tree-page-view-status-{$one_page->post_status}'>".__(ucfirst($one_page->post_status))."</span>";
 		}
 
+		// add css if we have childs
+		$args_childs = $args;
+		$args_childs["parent"] = $one_page->ID;
+		$args_childs["post_parent"] = $one_page->ID;
+		$args_childs["child_of"] = $one_page->ID;
+		$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
+		if ($post_children_count>0) {
+			$class .= " admin-menu-tree-page-view-has-childs";
+		}
+		
+		// determine if ul should be opened or closed
+		$isOpened = FALSE;
+		
+		// check cookie first
+		$cookie_opened = isset($_COOKIE["admin-menu-tree-page-view-open-posts"]) ? $_COOKIE["admin-menu-tree-page-view-open-posts"] : ""; // 2,95,n
+		$cookie_opened = explode(",", $cookie_opened);
+		if (in_array($one_page->ID, $cookie_opened) ||  $isOpened && $post_children_count>0) {
+			$class .= " admin-menu-tree-page-view-opened";
+		} elseif ($post_children_count>0) {
+			$class .= " admin-menu-tree-page-view-closed";
+		}
+
 		$output .= "<li class='$class'>";
 		$output .= "<a href='$edit_link'>$status_span";
 		$output .= $title;
 
-		
 		// add the view link, hidden, used in popup
 		$permalink = get_permalink($one_page->ID);
 		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
@@ -103,19 +129,15 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "</a>";
 
 		// now fetch child articles
-		#print_r($one_page);
-		$args_childs = $args;
-		$args_childs["parent"] = $one_page->ID;
-		$args_childs["post_parent"] = $one_page->ID;
-		$args_childs["child_of"] = $one_page->ID;
-		#echo "<pre>";print_r($args_childs);
-		$output .= admin_menu_tree_page_view_get_pages($args_childs);
+
+
+		$output .= $str_child_output;
 		
 		$output .= "</li>";
 	}
 	
 	// if this is a child listing, add ul
-	if (isset($args["child_of"]) && $args["child_of"]) {
+	if (isset($args["child_of"]) && $args["child_of"] && $output != "") {
 		$output = "<ul class='admin-menu-tree-page-tree_childs'>$output</ul>";
 	}
 	
@@ -194,7 +216,7 @@ function admin_menu_tree_page_view_add_page() {
 	#$pageID = str_replace("cms-tpv-", "", $pageID);
 	$page_title = trim($_POST["page_title"]);
 	$post_type = $_POST["post_type"];
-	$wpml_lang = $_POST["wpml_lang"];
+	$wpml_lang = isset($_POST["wpml_lang"]) ? $_POST["wpml_lang"] : "";
 	if (!$page_title) { $page_title = __("New page", 'cms-tree-page-view'); }
 
 	$ref_post = get_post($pageID);
