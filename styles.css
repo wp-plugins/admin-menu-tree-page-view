@@ -3,8 +3,6 @@
 	background-image: none !important;
 	border-left-width: 1px;
 	border-left-style: solid;
-	xbackground: transparent url(page-small.gif) no-repeat 7px 2px !important;
-	xbackground: transparent url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -16px -126px;
 	padding-left: 19px;
 }
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree {
@@ -34,13 +32,10 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 	border-left-style: solid;
 	border-right-width: 1px;
 	border-right-style: solid;
-
 	background: transparent url(page-small.gif) no-repeat 7px 2px !important;
-
 	padding-left: 19px;
 	padding-right: 8px;
 }
-
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a:hover {
 	background-color: #eaf2fa !important;
 }
@@ -77,6 +72,19 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 #adminmenu li ul.admin-menu-tree-page-tree a:hover .admin-menu-tree-page-view-edit:hover {
 	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png);
 }
+
+#adminmenu li ul.admin-menu-tree-page-tree a .admin-menu-tree-page-view-view-link {
+	display: none;
+}
+
+/* sublevels */
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > a {
+	background-image: url(page-small-minus.gif) !important;
+}
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > a {
+	background-image: url(page-small-plus.gif) !important;
+}
+
 
 li.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-filter
@@ -246,4 +254,29 @@ li.admin-menu-tree-page-filter
 ul.admin-menu-tree-page-tree .highlight {
 	background-color: #fff879;
 	color: #21759B;
+}
+
+
+ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {
+	display: block;
+	position: absolute;
+	left: 0px;
+	top: 1px;
+	width: 17px;
+	height: 14px;
+}
+ul.admin-menu-tree-page-tree ul .admin-menu-tree-page-expand {
+	top: 0px;
+	left: 9px;
+}
+ul.admin-menu-tree-page-tree ul {
+	display: none;
+}
+ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > ul {
+	display: block;
+}
+
+
+ul.admin-menu-tree-page-tree span.child-count {
+	color: #999999;
 }
