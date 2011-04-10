@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
-Version: 1.0
+Version: 1.1
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -32,7 +32,7 @@ add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_v
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "1.0" );
+	define( "admin_menu_tree_page_view_VERSION", "1.1" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
@@ -76,8 +76,12 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$title = get_the_title($one_page->ID);
 		
 		// add num of children to the title
-		$post_children = get_children($one_page->ID);
+		$post_children = get_children(array(
+			"post_parent" => $one_page->ID,
+			"post_type" => "page"
+		));
 		$post_children_count = sizeof($post_children);
+		// var_dump($post_children_count);
 		if ($post_children_count>0) {
 			$title .= " <span class='child-count'>($post_children_count)</span>";
 		}

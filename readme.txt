@@ -40,6 +40,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Changelog ==
 
+= 1.1 =
+- Children count was sometines wrong.
+
 = 1.0 =
 - Added functionality to expand/collapse
 
