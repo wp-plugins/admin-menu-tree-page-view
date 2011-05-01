@@ -186,7 +186,7 @@ li.admin-menu-tree-page-filter
 	display: none;
 }
 .admin-menu-tree-page-view-popup li {
-	text-decoration: underline;
+	/* text-decoration: underline; */
 	white-space: nowrap;
 }
 
@@ -269,6 +269,8 @@ ul.admin-menu-tree-page-tree ul .admin-menu-tree-page-expand {
 	top: 0px;
 	left: 9px;
 }
+
+
 ul.admin-menu-tree-page-tree ul {
 	display: none;
 }

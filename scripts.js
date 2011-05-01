@@ -6,7 +6,7 @@ jQuery(function($) {
 	}, 100);
 
 	// show menu when menu icon is clicked
-	jQuery(".admin-menu-tree-page-view-edit").click(function() {
+	jQuery("span.admin-menu-tree-page-view-edit").click(function() {
 		
 		var $this = $(this);
 						
@@ -14,7 +14,7 @@ jQuery(function($) {
 		var wpsubmenu = $(this).closest("div.wp-submenu");
 		if (wpsubmenu.length == 1) {
 			
-			var div_popup = wpsubmenu.find(".admin-menu-tree-page-view-popup");
+			var div_popup = wpsubmenu.find("div.admin-menu-tree-page-view-popup");
 			var do_show = true;
 			if (div_popup.length == 0) {
 				// no menu div yet, create it
@@ -37,10 +37,10 @@ jQuery(function($) {
 			
 			var a = $this.closest("a");
 			var link_text = a.text();
-			if (div_popup.find(".admin-menu-tree-page-view-popup-page").text() == link_text) {
+			if (div_popup.find("div.admin-menu-tree-page-view-popup-page").text() == link_text) {
 				do_show = false;
 			}
-			div_popup.find(".admin-menu-tree-page-view-popup-page").text( link_text );
+			div_popup.find("div.admin-menu-tree-page-view-popup-page").text( link_text );
 			var offset = $this.offset();
 			offset.top = (offset.top-3);
 			offset.left = (offset.left-3);
@@ -52,18 +52,18 @@ jQuery(function($) {
 
 			// setup edit and view links
 			var edit_link = "post.php?post="+post_id+"&action=edit";
-			div_popup.find(".admin-menu-tree-page-view-popup-edit a").attr("href", edit_link);
+			div_popup.find("div.admin-menu-tree-page-view-popup-edit a").attr("href", edit_link);
 			
 			// view link, this is probably not such a safe way to this this. but let's try! :)
 			var view_link = $this.closest("li").find(".admin-menu-tree-page-view-view-link").text();
-			div_popup.find(".admin-menu-tree-page-view-popup-view a").attr("href", view_link);
+			div_popup.find("div.admin-menu-tree-page-view-popup-view a").attr("href", view_link);
 			
 			if (do_show) {
 				div_popup.fadeIn("fast");
 			} else {
 				// same popup, so close it
 				div_popup.fadeOut("fast");
-				div_popup.find(".admin-menu-tree-page-view-popup-page").text("");
+				div_popup.find("div.admin-menu-tree-page-view-popup-page").text("");
 			}
 			
 			div_popup.offset( offset ); // must be last or position gets wrong somehow
@@ -74,14 +74,14 @@ jQuery(function($) {
 	});
 	
 	// hide menu
-	$(".admin-menu-tree-page-view-popup-arrow").live("click", function() {
-		$(this).closest(".admin-menu-tree-page-view-popup").fadeOut("fast");
+	$("span.admin-menu-tree-page-view-popup-arrow").live("click", function() {
+		$(this).closest("div.admin-menu-tree-page-view-popup").fadeOut("fast");
 		return false;
 	});
 	
 	// add page
-	$(".admin-menu-tree-page-view-popup-add-here, .admin-menu-tree-page-view-popup-add-inside").live("click", function() {
-		var div_popup = $(this).closest(".admin-menu-tree-page-view-popup");
+	$("div.admin-menu-tree-page-view-popup-add-here, div.admin-menu-tree-page-view-popup-add-inside").live("click", function() {
+		var div_popup = $(this).closest("div.admin-menu-tree-page-view-popup");
 		var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
 		
 		var type = "after";
@@ -113,46 +113,59 @@ jQuery(function($) {
 	});
 	
 	// search/filter pages
-	$(".admin-menu-tree-page-filter input").keyup(function(e) {
-		var ul = $(this).closest(".admin-menu-tree-page-tree");
+	$("li.admin-menu-tree-page-filter input").keyup(function(e) {
+		var ul = $(this).closest("ul.admin-menu-tree-page-tree");
 		ul.find("li").hide();
-		ul.find(".admin-menu-tree-page-tree_headline,.admin-menu-tree-page-filter").show();
+		ul.find("li.admin-menu-tree-page-tree_headline,li.admin-menu-tree-page-filter").show();
 		var s = $(this).val();
 		var selector = "li:AminMenuTreePageContains('"+s+"')";
 		var hits = ul.find(selector);
 		if (hits.length > 0 || s != "") {
-			ul.find(".admin-menu-tree-page-filter-reset").fadeIn("fast");
+			ul.find("div.admin-menu-tree-page-filter-reset").fadeIn("fast");
 			ul.unhighlight();
 		}
 		if (s == "") {
-			ul.find(".admin-menu-tree-page-filter-reset").fadeOut("fast");
+			ul.find("div.admin-menu-tree-page-filter-reset").fadeOut("fast");
 		}
 		ul.highlight(s);
 		hits.show();
+		
+		// hits can be childs of hidden li:s, so we must show the parents of the hits too
+		hits.each(function(i, elm) {
+			var parent = elm.parentNode;
+			if (parent) {
+				parent = $(parent);
+				parent.parent().addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
+				//console.log(parent.parent());
+				parent.show();
+			}
+			
+		});
+		
 	});
 
 	// clear/reset filter and show all pages again
-	$(".admin-menu-tree-page-filter-reset").click(function() {
+	$("div.admin-menu-tree-page-filter-reset").click(function() {
 		var $t = $(this);
-		var ul = $t.closest(".admin-menu-tree-page-tree");
+		var ul = $t.closest("ul.admin-menu-tree-page-tree");
 		ul.find("li").fadeIn("fast");
 		$t.fadeOut("fast");
-		$t.closest(".admin-menu-tree-page-filter").find("input").val("").focus();
+		$t.closest("li.admin-menu-tree-page-filter").find("input").val("").focus();
 		ul.unhighlight();
 	});
 	
 	// label = hide in and focus input
-	$(".admin-menu-tree-page-filter label, .admin-menu-tree-page-filter input").click(function() {
+	$("li.admin-menu-tree-page-filter label, li.admin-menu-tree-page-filter input").click(function() {
 		var $t = $(this);
-		$t.closest(".admin-menu-tree-page-filter").find("label").hide();
-		$t.closest(".admin-menu-tree-page-filter").find("input").focus();
+		$t.closest("li.admin-menu-tree-page-filter").find("label").hide();
+		$t.closest("li.admin-menu-tree-page-filter").find("input").focus();
 	});
 
-	var trees = jQuery(".admin-menu-tree-page-tree");
+	var trees = jQuery("ul.admin-menu-tree-page-tree");
 	
 	// add links to expand/collapse
-	trees.find(".admin-menu-tree-page-view-has-childs").prepend("<div class='admin-menu-tree-page-expand' title='Show/Hide child pages' />");
-	trees.find(".admin-menu-tree-page-expand").live("click", function(e) {
+	trees.find("li.admin-menu-tree-page-view-has-childs").prepend("<div class='admin-menu-tree-page-expand' title='Show/Hide child pages' />");
+	trees.find("div.admin-menu-tree-page-expand").live("click", function(e) {
 		
 		e.preventDefault();
 		var $t = $(this);
@@ -183,12 +196,17 @@ jQuery(function($) {
 		if (isOpen) {
 			admin_menu_tree_page_view_opened_posts.push(post_id);
 		}
-		jQuery.cookie('admin-menu-tree-page-view-open-posts', admin_menu_tree_page_view_opened_posts.join(","));
+
+		admin_menu_tree_page_view_save_opened_posts();
 
 	});
 
 
 });
+
+function admin_menu_tree_page_view_save_opened_posts() {
+	jQuery.cookie('admin-menu-tree-page-view-open-posts', admin_menu_tree_page_view_opened_posts.join(","));
+}
 
 // array with all post ids that are open
 var admin_menu_tree_page_view_opened_posts = jQuery.cookie('admin-menu-tree-page-view-open-posts') || "";

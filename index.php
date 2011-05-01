@@ -40,12 +40,11 @@ function admin_menu_tree_page_view_admin_init() {
 	wp_enqueue_script( "jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
 
-
 	$oLocale = array(
 		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
 		"View" => __("View", 'admin-menu-tree-page-view'),
-		"Add_new_page_here" => __("New page here", 'admin-menu-tree-page-view'),
-		"Add_new_page_inside" => __("New page inside", 'admin-menu-tree-page-view'),
+		"Add_new_page_here" => __("Add new page after", 'admin-menu-tree-page-view'),
+		"Add_new_page_inside" => __("Add new page inside", 'admin-menu-tree-page-view'),
 		"Untitled" => __("Untitled", 'admin-menu-tree-page-view'),
 	);
 	wp_localize_script( "admin_menu_tree_page_view", 'amtpv_l10n', $oLocale);
@@ -114,11 +113,23 @@ function admin_menu_tree_page_view_get_pages($args) {
 		// check cookie first
 		$cookie_opened = isset($_COOKIE["admin-menu-tree-page-view-open-posts"]) ? $_COOKIE["admin-menu-tree-page-view-open-posts"] : ""; // 2,95,n
 		$cookie_opened = explode(",", $cookie_opened);
-		if (in_array($one_page->ID, $cookie_opened) ||  $isOpened && $post_children_count>0) {
+
+		// if we are editing a post, we should see it in the tree, right?
+		if ( isset($_GET["action"]) && "edit" == $_GET["action"] && isset($_GET["post"])) {
+			// if post with id get[post] is a parent of the current post, show it
+			if ($_GET["post"] != $one_page->ID) {
+				$one_page_parents = get_post_ancestors($_GET["post"]);
+				if (in_array($one_page->ID, $one_page_parents)) {
+					$isOpened = TRUE;
+				}
+			}
+		}
+
+		if (in_array($one_page->ID, $cookie_opened) || $isOpened && $post_children_count>0) {
 			$class .= " admin-menu-tree-page-view-opened";
 		} elseif ($post_children_count>0) {
 			$class .= " admin-menu-tree-page-view-closed";
-		}
+		}		
 
 		$output .= "<li class='$class'>";
 		$output .= "<a href='$edit_link'>$status_span";

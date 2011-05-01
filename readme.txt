@@ -4,7 +4,7 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: trunk
+Stable tag: 1.1
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
 
