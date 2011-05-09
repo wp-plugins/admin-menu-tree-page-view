@@ -37,7 +37,8 @@ function admin_menu_tree_page_view_admin_init() {
 
 	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
 	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
-	wp_enqueue_script( "jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
+	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
+	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
 
 	$oLocale = array(
@@ -130,8 +131,10 @@ function admin_menu_tree_page_view_get_pages($args) {
 		} elseif ($post_children_count>0) {
 			$class .= " admin-menu-tree-page-view-closed";
 		}		
-
-		$output .= "<li class='$class'>";
+		
+		$class .= " nestedSortable";
+		
+		$output .= "<li class='$class'><div>";
 		$output .= "<a href='$edit_link'>$status_span";
 		$output .= $title;
 
@@ -148,7 +151,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 		$output .= $str_child_output;
 		
-		$output .= "</li>";
+		$output .= "</div></li>";
 	}
 	
 	// if this is a child listing, add ul
@@ -170,12 +173,13 @@ function admin_menu_tree_page_view_admin_menu() {
 	$output = "
 		</a>
 		<ul class='admin-menu-tree-page-tree'>
-		<li class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</li>
-		<li class='admin-menu-tree-page-filter'>
-			<label>".__("Search", 'admin-menu-tree-page-view')."</label>
-			<input type='text' class='' />
-			<div class='admin-menu-tree-page-filter-reset' title='".__("Reset search and show all pages", 'admin-menu-tree-page-view')."'></div>
-		</li>
+			<li class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</li>
+			<li class='admin-menu-tree-page-filter'>
+				<label>".__("Search", 'admin-menu-tree-page-view')."</label>
+				<input type='text' class='' />
+				<div class='admin-menu-tree-page-filter-reset' title='".__("Reset search and show all pages", 'admin-menu-tree-page-view')."'></div>
+				<div class='admin-menu-tree-page-filter-nohits'>".__("No pages found", 'admin-menu-tree-page-view')."</div>
+			</li>
 		";
 
 	// get root items

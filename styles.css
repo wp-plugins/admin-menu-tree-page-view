@@ -18,8 +18,8 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 
 
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree {
-	border-left: 1px solid #aaa;
-	border-right: 1px solid #aaa;
+	border-left: 0px solid #aaa;
+	border-right: 0px solid #aaa;
 	padding-top: 5px;
 }
 
@@ -27,10 +27,10 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li {
 	position: relative;
 }
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a {
-	border-left-width: 1px;
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a {
+	border-left-width: 0px;
 	border-left-style: solid;
-	border-right-width: 1px;
+	border-right-width: 0px;
 	border-right-style: solid;
 	background: transparent url(page-small.gif) no-repeat 7px 2px !important;
 	padding-left: 19px;
@@ -78,10 +78,10 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 }
 
 /* sublevels */
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > a {
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > a {
 	background-image: url(page-small-minus.gif) !important;
 }
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > a {
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > div > a {
 	background-image: url(page-small-plus.gif) !important;
 }
 
@@ -95,9 +95,9 @@ li.admin-menu-tree-page-filter
 	margin: 0 0 0 0 !important;
 	padding-left: 6px !important;
 	border-left-style: solid;
-	border-left-width: 1px;
+	border-left-width: 0px;
 	border-right-style: solid;
-	border-right-width: 1px;
+	border-right-width: 0px;
 }
 
 .wp-has-current-submenu li.admin-menu-tree-page-tree_headline,
@@ -251,6 +251,11 @@ li.admin-menu-tree-page-filter
     cursor: text;
 }
 
+.admin-menu-tree-page-filter-nohits {
+	display: none;
+	text-transform: none;
+}
+
 ul.admin-menu-tree-page-tree .highlight {
 	background-color: #fff879;
 	color: #21759B;
@@ -274,11 +279,15 @@ ul.admin-menu-tree-page-tree ul .admin-menu-tree-page-expand {
 ul.admin-menu-tree-page-tree ul {
 	display: none;
 }
-ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > ul {
+ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > ul {
 	display: block;
 }
 
 
 ul.admin-menu-tree-page-tree span.child-count {
 	color: #999999;
+}
+
+.admin-menu-tree-page-placeholder {
+	background-color: yellow;
 }

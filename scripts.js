@@ -80,7 +80,7 @@ jQuery(function($) {
 	});
 	
 	// add page
-	$("div.admin-menu-tree-page-view-popup-add-here, div.admin-menu-tree-page-view-popup-add-inside").live("click", function() {
+	$(".admin-menu-tree-page-view-popup-add-here, .admin-menu-tree-page-view-popup-add-inside").live("click", function() {
 		var div_popup = $(this).closest("div.admin-menu-tree-page-view-popup");
 		var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
 		
@@ -139,8 +139,15 @@ jQuery(function($) {
 				//console.log(parent.parent());
 				parent.show();
 			}
-			
 		});
+		
+		// if no hits: tell the user so we have less confusion. confusion is bad.
+		var nohits_div = ul.find("div.admin-menu-tree-page-filter-nohits");
+		if (hits.length == 0) {
+			nohits_div.show();
+		} else {
+			nohits_div.hide();
+		}
 		
 	});
 
@@ -152,6 +159,7 @@ jQuery(function($) {
 		$t.fadeOut("fast");
 		$t.closest("li.admin-menu-tree-page-filter").find("input").val("").focus();
 		ul.unhighlight();
+		ul.find("div.admin-menu-tree-page-filter-nohits").hide();
 	});
 	
 	// label = hide in and focus input
@@ -164,7 +172,7 @@ jQuery(function($) {
 	var trees = jQuery("ul.admin-menu-tree-page-tree");
 	
 	// add links to expand/collapse
-	trees.find("li.admin-menu-tree-page-view-has-childs").prepend("<div class='admin-menu-tree-page-expand' title='Show/Hide child pages' />");
+	trees.find("li.admin-menu-tree-page-view-has-childs > div").after("<div class='admin-menu-tree-page-expand' title='Show/Hide child pages' />");
 	trees.find("div.admin-menu-tree-page-expand").live("click", function(e) {
 		
 		e.preventDefault();
