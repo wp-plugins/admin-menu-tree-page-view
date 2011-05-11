@@ -4,7 +4,7 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.1
+Stable tag: 1.2
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
 
@@ -39,6 +39,13 @@ Now the tree with the pages will be visible in the admin menu to the left.
 3. You can expand/collapse sub-pages. Keeps the meny compact, but gives you the option to instantly dig deep down the page hierarchy.
 
 == Changelog ==
+
+= 1.2 =
+- Tree now always opens up when editing a page, so you will always see the page you're ediiting.
+- When searching, the parents of a page with a match is opened, so search hits will always be visible.
+- When searching and no pages found, show text "no pages found".
+- CSS changes for upcoming admin area CSS changes in WordPress (may look wierd on current/older versions of WordPress...)
+- Some preparing for using nestedSortable to order the pages
 
 = 1.1 =
 - Children count was sometines wrong.
