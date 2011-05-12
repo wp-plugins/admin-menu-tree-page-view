@@ -4,7 +4,7 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.2
+Stable tag: 1.2.1
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
 
@@ -39,6 +39,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 3. You can expand/collapse sub-pages. Keeps the meny compact, but gives you the option to instantly dig deep down the page hierarchy.
 
 == Changelog ==
+
+= 1.2.1 =
+- The plus-sign/expand link now works at least three levels down in the tree
 
 = 1.2 =
 - Tree now always opens up when editing a page, so you will always see the page you're ediiting.
