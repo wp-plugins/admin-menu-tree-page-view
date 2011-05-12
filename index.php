@@ -134,21 +134,36 @@ function admin_menu_tree_page_view_get_pages($args) {
 		
 		$class .= " nestedSortable";
 		
-		$output .= "<li class='$class'><div>";
+		$output .= "<li class='$class'>";
+		// first div used for nestedSortable
+		$output .= "<div>";
 		$output .= "<a href='$edit_link'>$status_span";
 		$output .= $title;
 
 		// add the view link, hidden, used in popup
 		$permalink = get_permalink($one_page->ID);
 		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
-		
 		$output .= "<span class='admin-menu-tree-page-view-edit'></span>";
+
+		// popup edit div
+		$output .= "
+			<span class='amtpv-editpopup'>
+				<span class='amtpv-editpopup-editview'>
+					<span class='amtpv-editpopup-edit'>Edit</span>
+					 | 
+					<span class='amtpv-editpopup-view'>View</span>
+				</span>
+				<span class='amtpv-editpopup-add'>Add new page: <br />
+					<span class='amtpv-editpopup-add-after'>After</span>
+					 | 
+					<span class='amtpv-editpopup-add-inside'>Inside</span>
+				</span>
+			</span>
+		";
 
 		$output .= "</a>";
 
-		// now fetch child articles
-
-
+		// add child articles
 		$output .= $str_child_output;
 		
 		$output .= "</div></li>";

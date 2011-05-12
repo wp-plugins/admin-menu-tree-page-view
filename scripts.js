@@ -133,9 +133,11 @@ jQuery(function($) {
 		// hits can be childs of hidden li:s, so we must show the parents of the hits too
 		hits.each(function(i, elm) {
 			var parent = elm.parentNode;
+			console.log(parent);
 			if (parent) {
 				parent = $(parent);
-				parent.parent().addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
+				// ul -> div -> ul
+				parent.parent().parent().addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
 				//console.log(parent.parent());
 				parent.show();
 			}
@@ -207,6 +209,37 @@ jQuery(function($) {
 
 		admin_menu_tree_page_view_save_opened_posts();
 
+	});
+
+
+
+	// mouse over to show edit-box
+	$("ul.admin-menu-tree-page-tree li a:first-child").live("mouseenter mouseleave", function(e) {
+		//console.log("e", e);
+		var t = $(this);
+		var li = t.closest("li");
+		//console.log("li", li);
+		var popupdiv = li.find("span.amtpv-editpopup:first");
+		if (e.type == "mouseenter") {
+			var ul = t.closest("ul.admin-menu-tree-page-tree");
+			ul.find("span.amtpv-editpopup").removeClass("amtpv-editpopup-hover");
+			popupdiv.addClass("amtpv-editpopup-hover");
+		} else if (e.type == "mouseleave") {
+			// don't hide if related target is the shadow of the menu, aka #adminmenushadow
+			var do_hide = true;
+			if (e.relatedTarget && e.relatedTarget.id == "adminmenushadow") {
+				do_hide = false;
+			}
+			if (do_hide) {
+				popupdiv.removeClass("amtpv-editpopup-hover");
+			}
+			
+		}
+	});
+	
+	// don't allow clicks directly on .amtpv-editpopup. it's kinda confusing
+	$("span.amtpv-editpopup").live("click", function(e) {
+		e.preventDefault();
 	});
 
 
