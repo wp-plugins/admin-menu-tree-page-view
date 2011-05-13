@@ -241,6 +241,67 @@ jQuery(function($) {
 	$("span.amtpv-editpopup").live("click", function(e) {
 		e.preventDefault();
 	});
+	
+	// edit/view links
+	$("span.amtpv-editpopup-edit, span.amtpv-editpopup-view").live("click",function(e) {
+		e.preventDefault();
+		var t = $(this);
+		var link = t.data("link");
+		var new_win = false;
+		
+		if ( ($.client.os == "Mac" && (e.metaKey || e.shiftKey)) || ($.client.os != "Mac" && e.ctrlKey) ) {
+			new_win = true;
+		}		
+		if (new_win) {
+			window.open(link);
+		} else {
+			document.location = link;
+		}
+		
+	});
+	
+	// add links
+	$("span.amtpv-editpopup-add-after, span.amtpv-editpopup-add-inside").live("click", function(e) {
+
+		var t = $(this);
+		var post_id = t.closest("a").data("post-id");
+		
+		var type = "after";
+		if ($(this).hasClass("amtpv-editpopup-add-inside")) {
+			type = "inside";
+		}
+		
+		var page_title = prompt("Enter name of new page", amtpv_l10n.Untitled);
+		if (page_title) {
+			
+			var data = {
+				"action": 'admin_menu_tree_page_view_add_page',
+				"pageID": post_id,
+				"type": type,
+				"page_title": page_title,
+				"post_type": "page"
+			};
+			jQuery.post(ajaxurl, data, function(response) {
+				if (response != "0") {
+					var new_win = false;
+					if ( ($.client.os == "Mac" && (e.metaKey || e.shiftKey)) || ($.client.os != "Mac" && e.ctrlKey) ) {
+						new_win = true;
+					}		
+					if (new_win) {
+						window.open(response);
+					} else {
+						document.location = response;
+					}
+
+				}
+			});
+			return false;
+		
+		} else {
+			return false;
+		}
+		
+	});
 
 
 });

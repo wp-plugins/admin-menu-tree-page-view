@@ -234,11 +234,16 @@ li.admin-menu-tree-page-filter
 .admin-menu-tree-page-filter {
 	position: relative;
 }
-.admin-menu-tree-page-filter input {
+#adminmenu .admin-menu-tree-page-filter input {
 	width: 125px;
 	font-size: 10px;
 	line-height: 1em;
 	padding: 2px;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+}
+#menu-pages * {
+	-moz-user-select: text;
 }
 
 .admin-menu-tree-page-filter-reset {

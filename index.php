@@ -39,6 +39,7 @@ function admin_menu_tree_page_view_admin_init() {
 	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
 	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
 	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
+	wp_enqueue_script("jquery.client", admin_menu_tree_page_view_URL . "jquery.client.js", array("jquery"));
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
 
 	$oLocale = array(
@@ -119,7 +120,10 @@ function admin_menu_tree_page_view_get_pages($args) {
 		if ( isset($_GET["action"]) && "edit" == $_GET["action"] && isset($_GET["post"])) {
 			// if post with id get[post] is a parent of the current post, show it
 			if ($_GET["post"] != $one_page->ID) {
-				$one_page_parents = get_post_ancestors($_GET["post"]);
+				$post_to_check_parents_for = $_GET["post"];
+				// seems to be a problem with get_post_ancestors (yes, it's in the trac too)
+				wp_cache_delete($post_to_check_parents_for, 'posts');
+				$one_page_parents = get_post_ancestors($post_to_check_parents_for);
 				if (in_array($one_page->ID, $one_page_parents)) {
 					$isOpened = TRUE;
 				}
@@ -137,7 +141,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "<li class='$class'>";
 		// first div used for nestedSortable
 		$output .= "<div>";
-		$output .= "<a href='$edit_link'>$status_span";
+		$output .= "<a href='$edit_link' data-post-id='".$one_page->ID."'>$status_span";
 		$output .= $title;
 
 		// add the view link, hidden, used in popup
@@ -149,14 +153,14 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "
 			<span class='amtpv-editpopup'>
 				<span class='amtpv-editpopup-editview'>
-					<span class='amtpv-editpopup-edit'>Edit</span>
+					<span class='amtpv-editpopup-edit' data-link='".$edit_link."'>".__("Edit", 'admin-menu-tree-page-view')."</span>
 					 | 
-					<span class='amtpv-editpopup-view'>View</span>
+					<span class='amtpv-editpopup-view' data-link='".$permalink."'>".__("View", 'admin-menu-tree-page-view')."</span>
 				</span>
-				<span class='amtpv-editpopup-add'>Add new page: <br />
-					<span class='amtpv-editpopup-add-after'>After</span>
+				<span class='amtpv-editpopup-add'>".__("Add new page", 'admin-menu-tree-page-view')."<br />
+					<span class='amtpv-editpopup-add-after'>".__("After", 'admin-menu-tree-page-view')."</span>
 					 | 
-					<span class='amtpv-editpopup-add-inside'>Inside</span>
+					<span class='amtpv-editpopup-add-inside'>".__("Inside", 'admin-menu-tree-page-view')."</span>
 				</span>
 			</span>
 		";
