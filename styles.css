@@ -3,8 +3,6 @@
 	background-image: none !important;
 	border-left-width: 1px;
 	border-left-style: solid;
-	xbackground: transparent url(page-small.gif) no-repeat 7px 2px !important;
-	xbackground: transparent url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -16px -126px;
 	padding-left: 19px;
 }
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree {
@@ -20,8 +18,8 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 
 
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree {
-	border-left: 1px solid #aaa;
-	border-right: 1px solid #aaa;
+	border-left: 0px solid #aaa;
+	border-right: 0px solid #aaa;
 	padding-top: 5px;
 }
 
@@ -29,20 +27,26 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li {
 	position: relative;
 }
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a {
-	border-left-width: 1px;
-	border-left-style: solid;
-	border-right-width: 1px;
-	border-right-style: solid;
-
-	background: transparent url(page-small.gif) no-repeat 7px 2px !important;
-
-	padding-left: 19px;
-	padding-right: 8px;
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-has-childs.admin-menu-tree-page-view-opened {
+	margin-bottom: 2px;
 }
 
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a {
+	border-left-width: 0px;
+	border-left-style: solid;
+	border-right-width: 0px;
+	border-right-style: solid;
+	background: transparent url(page-small.gif) no-repeat 7px 2px !important;
+	padding-left: 19px;
+	padding-right: 8px;
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+}
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a:hover {
 	background-color: #eaf2fa !important;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	/* box-shadow: 2px 2px 2px #DDDDDD; */
 }
 
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree li a {
@@ -52,7 +56,7 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 
 #adminmenu li ul.admin-menu-tree-page-tree li a {
 	font-size: 10px;
-	line-height: 13px;
+	line-height: 11px;
 	padding-top: 2px;
 }
 
@@ -71,12 +75,26 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 }
 
 #adminmenu li ul.admin-menu-tree-page-tree a:hover .admin-menu-tree-page-view-edit {
-	display: block;
+	/* 	disabled to support new edit popup */
+	/* display: block; */
 }
 
 #adminmenu li ul.admin-menu-tree-page-tree a:hover .admin-menu-tree-page-view-edit:hover {
 	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png);
 }
+
+#adminmenu li ul.admin-menu-tree-page-tree a .admin-menu-tree-page-view-view-link {
+	display: none;
+}
+
+/* sublevels */
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > a {
+	background-image: url(page-small-minus.gif) !important;
+}
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > div > a {
+	background-image: url(page-small-plus.gif) !important;
+}
+
 
 li.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-filter
@@ -87,9 +105,9 @@ li.admin-menu-tree-page-filter
 	margin: 0 0 0 0 !important;
 	padding-left: 6px !important;
 	border-left-style: solid;
-	border-left-width: 1px;
+	border-left-width: 0px;
 	border-right-style: solid;
-	border-right-width: 1px;
+	border-right-width: 0px;
 }
 
 .wp-has-current-submenu li.admin-menu-tree-page-tree_headline,
@@ -108,7 +126,7 @@ li.admin-menu-tree-page-filter
  {
 	padding-left: 27px;
 	padding-right: 8px;
-	background-position: 15px 1px !important;
+	background-position: 15px 2px !important;
 	font-weight: normal;
 	color: #21759B;
 }
@@ -118,7 +136,7 @@ li.admin-menu-tree-page-filter
  {
 	padding-left: 37px;
 	padding-right: 8px;
-	background-position: 25px 1px !important;
+	background-position: 25px 2px !important;
 	font-weight: normal;
 	color: #21759B;
 }
@@ -128,7 +146,7 @@ li.admin-menu-tree-page-filter
  {
 	padding-left: 47px;
 	padding-right: 8px;
-	background-position: 35px 1px !important;
+	background-position: 35px 2px !important;
 	font-weight: normal;
 	color: #21759B;
 }
@@ -178,7 +196,7 @@ li.admin-menu-tree-page-filter
 	display: none;
 }
 .admin-menu-tree-page-view-popup li {
-	text-decoration: underline;
+	/* text-decoration: underline; */
 	white-space: nowrap;
 }
 
@@ -216,11 +234,16 @@ li.admin-menu-tree-page-filter
 .admin-menu-tree-page-filter {
 	position: relative;
 }
-.admin-menu-tree-page-filter input {
+#adminmenu .admin-menu-tree-page-filter input {
 	width: 125px;
 	font-size: 10px;
 	line-height: 1em;
 	padding: 2px;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+}
+#menu-pages * {
+	-moz-user-select: text;
 }
 
 .admin-menu-tree-page-filter-reset {
@@ -243,7 +266,108 @@ li.admin-menu-tree-page-filter
     cursor: text;
 }
 
+.admin-menu-tree-page-filter-nohits {
+	display: none;
+	text-transform: none;
+}
+
 ul.admin-menu-tree-page-tree .highlight {
 	background-color: #fff879;
 	color: #21759B;
+}
+
+
+ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {
+	display: block;
+	position: absolute;
+	left: 0px;
+	top: 1px;
+	width: 17px;
+	height: 14px;
+}
+ul.admin-menu-tree-page-tree ul .admin-menu-tree-page-expand {
+	top: 0px;
+	left: 9px;
+}
+ul.admin-menu-tree-page-tree ul ul .admin-menu-tree-page-expand {
+	top: 0px;
+	left: 17px;
+}
+ul.admin-menu-tree-page-tree ul ul ul .admin-menu-tree-page-expand {
+	top: 0px;
+	left: 25px;
+}
+
+
+ul.admin-menu-tree-page-tree ul {
+	display: none;
+}
+ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div + ul {
+	display: block;
+}
+
+
+ul.admin-menu-tree-page-tree span.child-count {
+	color: #999999;
+}
+
+.admin-menu-tree-page-placeholder {
+	background-color: yellow;
+}
+
+.amtpv-editpopup {
+	display: none;
+	width: 200px;
+	left: 145px;
+	top: 0;
+	position: absolute;
+	background-color: white;
+	border: 1px solid #ccc;
+	border-left: none;
+	padding: 10px;
+	opacity: .5;
+	font-weight: normal;
+	border-radius: 0 3px 3px 3px;
+	cursor: default;
+	box-shadow: 2px 2px 2px #ddd;
+	font-size: 12px;
+	line-height: 1.3;
+	background-color: #EAF2FA;
+	background-image: -moz-linear-gradient(left , #d3dbe1, #EAF2FA 10px);
+	background-image: -webkit-linear-gradient(left , #d3dbe1, #EAF2FA 5px);
+	margin-top: -8px;
+}
+.amtpv-editpopup-hover {
+	display: block;
+}
+.amtpv-editpopup-hover:hover {
+	/* i know... hover hover! in sweden we call that "kaka på kaka" */
+	opacity: 1;
+}
+.amtpv-editpopup-editview,
+.amtpv-editpopup-add
+ {
+	display: block;
+}
+.amtpv-editpopup-editview {
+	margin-bottom: .5em;
+}
+/* "links" */
+.amtpv-editpopup-edit,
+.amtpv-editpopup-view,
+.amtpv-editpopup-add-after,
+.amtpv-editpopup-add-inside {
+	text-decoration: underline;
+	color: #21759B;
+	cursor: pointer;
+}
+.amtpv-editpopup-edit:hover,
+.amtpv-editpopup-view:hover,
+.amtpv-editpopup-add-after:hover,
+.amtpv-editpopup-add-inside:hover {
+	color: #D54E21;
+}
+
+.ui-nestedSortable-error {
+	border: 1px solid red;
 }
