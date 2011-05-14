@@ -166,11 +166,15 @@ function admin_menu_tree_page_view_get_pages($args) {
 		";
 
 		$output .= "</a>";
+		
+		// close div for nestedSortable
+		$output .= "</div>";
+
 
 		// add child articles
 		$output .= $str_child_output;
 		
-		$output .= "</div></li>";
+		$output .= "</li>";
 	}
 	
 	// if this is a child listing, add ul

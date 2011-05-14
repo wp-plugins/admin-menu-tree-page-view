@@ -302,7 +302,7 @@ ul.admin-menu-tree-page-tree ul ul ul .admin-menu-tree-page-expand {
 ul.admin-menu-tree-page-tree ul {
 	display: none;
 }
-ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > ul {
+ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div + ul {
 	display: block;
 }
 
@@ -366,4 +366,8 @@ ul.admin-menu-tree-page-tree span.child-count {
 .amtpv-editpopup-add-after:hover,
 .amtpv-editpopup-add-inside:hover {
 	color: #D54E21;
+}
+
+.ui-nestedSortable-error {
+	border: 1px solid red;
 }
