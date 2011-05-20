@@ -34,13 +34,14 @@ function admin_menu_tree_page_view_admin_init() {
 
 	define( "admin_menu_tree_page_view_VERSION", "1.3" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
+	define( "admin_menu_tree_page_view_DIR", WP_PLUGIN_DIR . '/admin-menu-tree-page-view/' );
 
-	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "styles.css", false, admin_menu_tree_page_view_VERSION);
-	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "jquery.highlight.js", array("jquery"));
-	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
-	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
-	wp_enqueue_script("jquery.client", admin_menu_tree_page_view_URL . "jquery.client.js", array("jquery"));
-	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "scripts.js", array("jquery"));
+	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "css/styles.css", false, admin_menu_tree_page_view_VERSION);
+	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "js/jquery.highlight.js", array("jquery"));
+	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "js/jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
+	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "js/jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
+	wp_enqueue_script("jquery.client", admin_menu_tree_page_view_URL . "js/jquery.client.js", array("jquery"));
+	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "js/scripts.js", array("jquery"));
 
 	$oLocale = array(
 		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
@@ -162,6 +163,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 					 | 
 					<span class='amtpv-editpopup-add-inside'>".__("Inside", 'admin-menu-tree-page-view')."</span>
 				</span>
+				<span class='amtpv-editpopup-postid'>".__("Post ID:", 'admin-menu-tree-page-view')." " . $one_page->ID."</span>
 			</span>
 		";
 
