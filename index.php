@@ -142,6 +142,8 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "<li class='$class'>";
 		// first div used for nestedSortable
 		$output .= "<div>";
+		// div used to make hover work and to put edit-popup outside the <a>
+		$output .= "<div class='amtpv-linkwrap' data-post-id='".$one_page->ID."'>";
 		$output .= "<a href='$edit_link' data-post-id='".$one_page->ID."'>$status_span";
 		$output .= $title;
 
@@ -150,6 +152,8 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
 		$output .= "<span class='admin-menu-tree-page-view-edit'></span>";
 
+		$output .= "</a>";
+		
 		// popup edit div
 		$output .= "
 			<span class='amtpv-editpopup'>
@@ -167,11 +171,11 @@ function admin_menu_tree_page_view_get_pages($args) {
 			</span>
 		";
 
-		$output .= "</a>";
-		
-		// close div for nestedSortable
+		// close div used to make hover work and to put edit-popup outside the <a>
 		$output .= "</div>";
 
+		// close div for nestedSortable
+		$output .= "</div>";
 
 		// add child articles
 		$output .= $str_child_output;
@@ -258,11 +262,11 @@ function admin_menu_tree_page_view_add_page() {
 	$type = $_POST["type"];
 	$pageID = (int) $_POST["pageID"];
 	#$pageID = str_replace("cms-tpv-", "", $pageID);
-	$page_title = trim($_POST["page_title"]);
+	//$page_title = trim($_POST["page_title"]);
 	$post_type = $_POST["post_type"];
 	$wpml_lang = isset($_POST["wpml_lang"]) ? $_POST["wpml_lang"] : "";
-	if (!$page_title) { $page_title = __("New page", 'cms-tree-page-view'); }
-
+	//if (!$page_title) { $page_title = __("New page", 'admin-menu-tree-page-view'); }
+	$page_titles = (array) $_POST["page_titles"];
 	$ref_post = get_post($pageID);
 
 	if ("after" == $type) {
@@ -271,38 +275,73 @@ function admin_menu_tree_page_view_add_page() {
 			add page under/below ref_post
 		*/
 
-		// update menu_order of all pages below our page
-		$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+2 WHERE post_parent = %d AND menu_order >= %d AND id <> %d ", $ref_post->post_parent, $ref_post->menu_order, $ref_post->ID ) );		
+		if (!function_exists("admin_menu_tree_page_view_add_page_after")) {
+		function admin_menu_tree_page_view_add_page_after($ref_post_id, $page_title, $post_type) {
+			
+			global $wpdb;
+			
+			$ref_post = get_post($ref_post_id);
+			// update menu_order of all pages below our page
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+2 WHERE post_parent = %d AND menu_order >= %d AND id <> %d ", $ref_post->post_parent, $ref_post->menu_order, $ref_post->ID ) );
+			
+			// create a new page and then goto it
+			$post_new = array();
+			$post_new["menu_order"] = $ref_post->menu_order+1;
+			$post_new["post_parent"] = $ref_post->post_parent;
+			$post_new["post_type"] = "page";
+			$post_new["post_status"] = "draft";
+			$post_new["post_title"] = $page_title;
+			$post_new["post_content"] = "";
+			$post_new["post_type"] = $post_type;
+			$newPostID = wp_insert_post($post_new);
+			return $newPostID;
+		}
+		}
 		
-		// create a new page and then goto it
-		$post_new = array();
-		$post_new["menu_order"] = $ref_post->menu_order+1;
-		$post_new["post_parent"] = $ref_post->post_parent;
-		$post_new["post_type"] = "page";
-		$post_new["post_status"] = "draft";
-		$post_new["post_title"] = $page_title;
-		$post_new["post_content"] = "";
-		$post_new["post_type"] = $post_type;
-		$newPostID = wp_insert_post($post_new);
+		$ref_post_id = $ref_post->ID;
+		foreach ($page_titles as $one_page_title) {
+			$newPostID = admin_menu_tree_page_view_add_page_after($ref_post_id, $one_page_title, $post_type);
+			$new_post = get_post($newPostID);
+			$ref_post_id = $new_post->ID;
+		}
 
 	} else if ( "inside" == $type ) {
 
 		/*
 			add page inside ref_post
 		*/
+		if (!function_exists("admin_menu_tree_page_view_add_page_inside")) {
+		function admin_menu_tree_page_view_add_page_inside($ref_post_id, $page_title, $post_type) {
 
-		// update menu_order, so our new post is the only one with order 0
-		$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE post_parent = %d", $ref_post->ID) );		
+			global $wpdb;
+			
+			$ref_post = get_post($ref_post_id);
 
-		$post_new = array();
-		$post_new["menu_order"] = 0;
-		$post_new["post_parent"] = $ref_post->ID;
-		$post_new["post_type"] = "page";
-		$post_new["post_status"] = "draft";
-		$post_new["post_title"] = $page_title;
-		$post_new["post_content"] = "";
-		$post_new["post_type"] = $post_type;
-		$newPostID = wp_insert_post($post_new);
+			// update menu_order, so our new post is the only one with order 0
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE post_parent = %d", $ref_post->ID) );		
+	
+			$post_new = array();
+			$post_new["menu_order"] = 0;
+			$post_new["post_parent"] = $ref_post->ID;
+			$post_new["post_type"] = "page";
+			$post_new["post_status"] = "draft";
+			$post_new["post_title"] = $page_title;
+			$post_new["post_content"] = "";
+			$post_new["post_type"] = $post_type;
+			$newPostID = wp_insert_post($post_new);
+			return $newPostID;
+		
+		}
+		}
+		
+		// add reversed
+		$ref_post_id = $ref_post->ID;
+		$page_titles = array_reverse($page_titles);
+		foreach ($page_titles as $one_page_title) {
+			$newPostID = admin_menu_tree_page_view_add_page_inside($ref_post_id, $one_page_title, $post_type);
+			$new_post = get_post($newPostID);
+			// $ref_post_id = $new_post->ID;
+		}
 
 	}
 	

@@ -44,8 +44,10 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 }
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a:hover {
 	background-color: #eaf2fa !important;
-	border-bottom: 1px solid #ccc;
+	/*
+border-bottom: 1px solid #ccc;
 	border-top: 1px solid #ccc;
+*/
 	/* box-shadow: 2px 2px 2px #DDDDDD; */
 }
 
@@ -373,6 +375,67 @@ ul.admin-menu-tree-page-tree span.child-count {
 	top: 10px;
 	right: 10px;
 	color: #888;
+}
+
+.amtpv-editpopup-addpages {
+	display: block;
+}
+.amtpv-editpopup-addpages-addpage {
+	display: block;
+	text-decoration: underline;
+	color: #21759B;
+	cursor: pointer;
+	text-align: right;
+}
+.amtpv-editpopup-addpages-addpage:hover {
+	color: #D54E21;
+}
+.amtpv-editpopup-addpages-cancel {
+	text-decoration: underline;
+	color: #21759B;
+	cursor: pointer;
+}
+.amtpv-editpopup-addpages-cancel:hover {
+	color: #D54E21;
+}
+
+.amtpv-editpopup-addpages-label
+ {
+	display: block;
+	margin-top: 10px;
+}
+
+.amtpv-editpopup-addpages-name {
+	width: 200px;
+}
+
+.amtpv-editpopup-addpages-publish-checkbox-wrap {
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+#amtpv-editpopup-addpages-publish-checkbox {
+	margin-right: 4px;
+}
+
+
+.amtpv-editpopup-addpages-headline {
+	font-weight: bold;
+}
+
+
+.amtpv-linkwrap {
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+}
+.amtpv-linkwrap-hover {
+	background-color: #EAF2FA;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+}
+
+.amtpv-editpopup-addpages-submit input {
+	cursor: pointer;
 }
 
 .ui-nestedSortable-error {
