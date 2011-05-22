@@ -41,6 +41,7 @@ function admin_menu_tree_page_view_admin_init() {
 	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "js/jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
 	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "js/jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
 	wp_enqueue_script("jquery.client", admin_menu_tree_page_view_URL . "js/jquery.client.js", array("jquery"));
+	wp_enqueue_script("jquery-ui-sortable");
 	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "js/scripts.js", array("jquery"));
 
 	$oLocale = array(
@@ -156,19 +157,19 @@ function admin_menu_tree_page_view_get_pages($args) {
 		
 		// popup edit div
 		$output .= "
-			<span class='amtpv-editpopup'>
-				<span class='amtpv-editpopup-editview'>
-					<span class='amtpv-editpopup-edit' data-link='".$edit_link."'>".__("Edit", 'admin-menu-tree-page-view')."</span>
+			<div class='amtpv-editpopup'>
+				<div class='amtpv-editpopup-editview'>
+					<div class='amtpv-editpopup-edit' data-link='".$edit_link."'>".__("Edit", 'admin-menu-tree-page-view')."</div>
 					 | 
-					<span class='amtpv-editpopup-view' data-link='".$permalink."'>".__("View", 'admin-menu-tree-page-view')."</span>
-				</span>
-				<span class='amtpv-editpopup-add'>".__("Add new page", 'admin-menu-tree-page-view')."<br />
-					<span class='amtpv-editpopup-add-after'>".__("After", 'admin-menu-tree-page-view')."</span>
+					<div class='amtpv-editpopup-view' data-link='".$permalink."'>".__("View", 'admin-menu-tree-page-view')."</div>
+				</div>
+				<div class='amtpv-editpopup-add'>".__("Add new page", 'admin-menu-tree-page-view')."<br />
+					<div class='amtpv-editpopup-add-after'>".__("After", 'admin-menu-tree-page-view')."</div>
 					 | 
-					<span class='amtpv-editpopup-add-inside'>".__("Inside", 'admin-menu-tree-page-view')."</span>
-				</span>
-				<span class='amtpv-editpopup-postid'>".__("Post ID:", 'admin-menu-tree-page-view')." " . $one_page->ID."</span>
-			</span>
+					<div class='amtpv-editpopup-add-inside'>".__("Inside", 'admin-menu-tree-page-view')."</div>
+				</div>
+				<div class='amtpv-editpopup-postid'>".__("Post ID:", 'admin-menu-tree-page-view')." " . $one_page->ID."</div>
+			</div>
 		";
 
 		// close div used to make hover work and to put edit-popup outside the <a>
@@ -276,7 +277,7 @@ function admin_menu_tree_page_view_add_page() {
 		*/
 
 		if (!function_exists("admin_menu_tree_page_view_add_page_after")) {
-		function admin_menu_tree_page_view_add_page_after($ref_post_id, $page_title, $post_type) {
+		function admin_menu_tree_page_view_add_page_after($ref_post_id, $page_title, $post_type, $post_status = "draft") {
 			
 			global $wpdb;
 			
@@ -311,7 +312,7 @@ function admin_menu_tree_page_view_add_page() {
 			add page inside ref_post
 		*/
 		if (!function_exists("admin_menu_tree_page_view_add_page_inside")) {
-		function admin_menu_tree_page_view_add_page_inside($ref_post_id, $page_title, $post_type) {
+		function admin_menu_tree_page_view_add_page_inside($ref_post_id, $page_title, $post_type, $post_status = "draft") {
 
 			global $wpdb;
 			

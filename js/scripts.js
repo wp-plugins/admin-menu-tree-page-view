@@ -5,80 +5,7 @@ jQuery(function($) {
 		jQuery("#toplevel_page_admin-menu-tree-page-tree_main").addClass("wp-menu-open");
 	}, 100);
 
-	// show menu when menu icon is clicked
-	jQuery("span.admin-menu-tree-page-view-edit").click(function() {
 		
-		var $this = $(this);
-						
-		// check if this tree has a menu div defined
-		var wpsubmenu = $(this).closest("div.wp-submenu");
-		if (wpsubmenu.length == 1) {
-			
-			var div_popup = wpsubmenu.find("div.admin-menu-tree-page-view-popup");
-			var do_show = true;
-			if (div_popup.length == 0) {
-				// no menu div yet, create it
-				var html = "";
-				html += "<div class='admin-menu-tree-page-view-popup'><span class='admin-menu-tree-page-view-popup-arrow'></span><span class='admin-menu-tree-page-view-popup-page'></span>";
-				html += "<ul>";
-				html += "<li class='admin-menu-tree-page-view-popup-edit'><a href=''>"+amtpv_l10n.Edit+"</a></li>";
-				html += "<li class='admin-menu-tree-page-view-popup-view'><a href=''>"+amtpv_l10n.View+"</a></li>";
-				html += "<li class='admin-menu-tree-page-view-popup-add-here'><a href=''>"+amtpv_l10n.Add_new_page_here+"</a></li>";
-				html += "<li class='admin-menu-tree-page-view-popup-add-inside'><a href=''>"+amtpv_l10n.Add_new_page_inside+"</a></li>";
-				html += "</ul></div>";
-				var div_popup = $(html).appendTo(wpsubmenu);
-				div_popup.show(); // must do this..
-				div_popup.hide(); // ..or fade does not work first time
-			} else {
-				if (div_popup.is(":visible")) {
-					//do_show = false;
-				}
-			}
-			
-			var a = $this.closest("a");
-			var link_text = a.text();
-			if (div_popup.find("div.admin-menu-tree-page-view-popup-page").text() == link_text) {
-				do_show = false;
-			}
-			div_popup.find("div.admin-menu-tree-page-view-popup-page").text( link_text );
-			var offset = $this.offset();
-			offset.top = (offset.top-3);
-			offset.left = (offset.left-3);
-
-			// store post_id
-			var post_id = a.attr("href").match(/post=([\w]+)/);
-			post_id = post_id[1];
-			div_popup.data("admin-menu-tree-page-view-current-post-id", post_id);
-
-			// setup edit and view links
-			var edit_link = "post.php?post="+post_id+"&action=edit";
-			div_popup.find("div.admin-menu-tree-page-view-popup-edit a").attr("href", edit_link);
-			
-			// view link, this is probably not such a safe way to this this. but let's try! :)
-			var view_link = $this.closest("li").find(".admin-menu-tree-page-view-view-link").text();
-			div_popup.find("div.admin-menu-tree-page-view-popup-view a").attr("href", view_link);
-			
-			if (do_show) {
-				div_popup.fadeIn("fast");
-			} else {
-				// same popup, so close it
-				div_popup.fadeOut("fast");
-				div_popup.find("div.admin-menu-tree-page-view-popup-page").text("");
-			}
-			
-			div_popup.offset( offset ); // must be last or position gets wrong somehow
-			
-		}
-		
-		return false;
-	});
-	
-	// hide menu
-	$("span.admin-menu-tree-page-view-popup-arrow").live("click", function() {
-		$(this).closest("div.admin-menu-tree-page-view-popup").fadeOut("fast");
-		return false;
-	});
-	
 	// add page
 	$(".admin-menu-tree-page-view-popup-add-here, .admin-menu-tree-page-view-popup-add-inside").live("click", function() {
 		var div_popup = $(this).closest("div.admin-menu-tree-page-view-popup");
@@ -220,34 +147,41 @@ jQuery(function($) {
 		var t = $(this);
 		var li = t.closest("li");
 		
-		var popupdiv = li.find("span.amtpv-editpopup:first");
+		var popupdiv = li.find("div.amtpv-editpopup:first");
+		var linkwrap = li.find("div.amtpv-linkwrap:first")
+		//var popup_linkwrap = popupdiv.closest("div.amtpv-linkwrap");
 		
 		if (e.type == "mouseenter" || e.type == "mouseover") {
 			var ul = t.closest("ul.admin-menu-tree-page-tree");
-			ul.find("span.amtpv-editpopup").removeClass("amtpv-editpopup-hover");
+			ul.find("div.amtpv-editpopup").removeClass("amtpv-editpopup-hover");
 			ul.find("div.amtpv-linkwrap").removeClass("amtpv-linkwrap-hover");
+
 			popupdiv.addClass("amtpv-editpopup-hover");
-			li.find("div.amtpv-linkwrap:first").addClass("amtpv-linkwrap-hover");
-		} else if (e.type == "mouseleave") {
+			linkwrap.addClass("amtpv-linkwrap-hover");
+			
+			
+		} else if (e.type == "mouseleave" || e.type == "mouseout") {
 			// don't hide if related target is the shadow of the menu, aka #adminmenushadow
 			var do_hide = true;
 			if (e.relatedTarget && e.relatedTarget.id == "adminmenushadow") {
 				do_hide = false;
 			}
+			
 			if (do_hide) {
 				popupdiv.removeClass("amtpv-editpopup-hover");
+				linkwrap.removeClass("amtpv-linkwrap-hover");
 			}
 			
 		}
 	});
 	
 	// don't allow clicks directly on .amtpv-editpopup. it's kinda confusing
-	$("span.amtpv-editpopup").live("click", function(e) {
+	$("div.amtpv-editpopup").live("click", function(e) {
 		//e.preventDefault();
 	});
 	
 	// edit/view links
-	$("span.amtpv-editpopup-edit, span.amtpv-editpopup-view").live("click",function(e) {
+	$("div.amtpv-editpopup-edit, div.amtpv-editpopup-view").live("click",function(e) {
 		e.preventDefault();
 		var t = $(this);
 		var link = t.data("link");
@@ -265,17 +199,21 @@ jQuery(function($) {
 	});
 	
 	// add links
-	$("span.amtpv-editpopup-add-after, span.amtpv-editpopup-add-inside").live("click", function(e) {
+	$("div.amtpv-editpopup-add-after, div.amtpv-editpopup-add-inside").live("click", function(e) {
 
 		var t = $(this);
 		var post_id = t.closest("a").data("post-id");
-		var popup = t.closest("span.amtpv-editpopup");
-		var editpopup_add = popup.find("span.amtpv-editpopup-add");
-		var editpopup_editview = popup.find("span.amtpv-editpopup-editview");
+		var popup = t.closest("div.amtpv-editpopup");
+		var popup_linkwrap = popup.closest("div.amtpv-linkwrap");
+		var editpopup_add = popup.find("div.amtpv-editpopup-add");
+		var editpopup_editview = popup.find("div.amtpv-editpopup-editview");
 		
-		//editpopup_add.hide();
-		//editpopup_editview.hide();
-		popup.find("> span").hide();
+		// hide all divs
+		// @todo: should put all in one div, and hide just that one
+		popup.find("> div").hide();
+
+		// add class that tell us that we are in "adding-mode"/"working-mode"
+		popup_linkwrap.addClass("amtpv-editpopup-is-working");
 
 		var type = "after";
 		if (t.hasClass("amtpv-editpopup-add-inside")) {
@@ -283,21 +221,40 @@ jQuery(function($) {
 		}
 		
 		// remove possibly previous added add-stuff
-		popup.find("span.amtpv-editpopup-addpages").remove();
+		popup.find("form.amtpv-editpopup-addpages").remove();
 		
-		var add_pages = $("<span />")
+		var add_pages = $("<form />")
 			.addClass("amtpv-editpopup-addpages")
 			.insertAfter(editpopup_add)
 			;
-		add_pages.append( "<span class='amtpv-editpopup-addpages-headline'>Add new page(s)</span>" );
+		add_pages.append( "<div class='amtpv-editpopup-addpages-headline'>Add new page(s)</div>" );
 		add_pages.append( $("<input type='hidden' class='amtpv-editpopup-addpages-type' value='"+type+"' />") );
-		//add_pages.append( $("<span class='amtpv-editpopup-addpages-status'><label>Status</label><select><option value='draft'>Draft</option><option value='publish'>Publish</option></select></span>"));
-		add_pages.append( $("<label class='amtpv-editpopup-addpages-label'>Name</label>") );
-		add_pages.append( $("<input class='amtpv-editpopup-addpages-name' type='text' value=''/>") );
-		add_pages.append( $("<span class='amtpv-editpopup-addpages-addpage'>+ page</span>"));
-		add_pages.append( $("<span class='amtpv-editpopup-addpages-publish-checkbox-wrap'><input id='amtpv-editpopup-addpages-publish-checkbox' type='checkbox' value='1'><label for='amtpv-editpopup-addpages-publish-checkbox'>Publish added pages</label></span>") );
-		add_pages.append( $("<span class='amtpv-editpopup-addpages-submit'><input type='button' value='Add page(s)' /> or <span class='amtpv-editpopup-addpages-cancel'>cancel</span></span>"));
+		//add_pages.append( $("<div class='amtpv-editpopup-addpages-status'><label>Status</label><select><option value='draft'>Draft</option><option value='publish'>Publish</option></select></div>"));
+
+		// var type = popup.find(".amtpv-editpopup-addpages-type").val();
+		if (type=="after") {
+			add_pages.append( $("<div class='amtpv-editpopup-addpages-position'><input checked='checked' type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-after' value='after' /><label for='amtpv-editpopup-addpages-position-after'>After</label> <input type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-inside' value='inside' /><label for='amtpv-editpopup-addpages-position-inside'>Inside</label> </div") );
+		} else if (type=="inside") {
+			add_pages.append( $("<div class='amtpv-editpopup-addpages-position'><input type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-after' value='after' /><label for='amtpv-editpopup-addpages-position-after'>After</label> <input checked='checked' type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-inside' value='inside' /><label for='amtpv-editpopup-addpages-position-inside'>Inside</label> </div") );	
+		}
+
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-names'><label class='amtpv-editpopup-addpages-label'>Name</label>") );
+		add_pages.append( $("<ul class='amtpv-editpopup-addpages-names-ul'><li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li></ul>") );
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
+		
+		// add_pages.append( $("<div class='amtpv-editpopup-addpages-publish-checkbox-wrap'><input id='amtpv-editpopup-addpages-publish-checkbox' type='checkbox' value='1'><label for='amtpv-editpopup-addpages-publish-checkbox'>Publish added pages</label></div>") );
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-publish'><label for='amtpv-editpopup-addpages-publish-select'>Status</label><select id='amtpv-editpopup-addpages-publish-select' name='status'><option value='published'>Published</option><option value='pending'>Pending Review</option><option value='draft' selected='selected'>Draft</option></select></div") );
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-submit'><input type='submit' class='button-primary' value='Add' /> or <a class='amtpv-editpopup-addpages-cancel'>cancel</a></div>"));
 		add_pages.find(".amtpv-editpopup-addpages-name").focus();
+		
+		add_pages.find("ul.amtpv-editpopup-addpages-names-ul").sortable({
+			"axis": "y",
+			"containment": 'parent',
+			"forceHelperSize": true,
+			"forcePlaceholderSize": true,
+			"handle": "span:first",
+			"cursor": "move"
+		});
 		
 		return;
 		
@@ -321,29 +278,33 @@ jQuery(function($) {
 	});
 
 	// add new page-link
-	$("span.amtpv-editpopup-addpages-addpage").live("click", function() {
+	$("div.amtpv-editpopup-addpages-addpage a").live("click", function(e) {
+		e.preventDefault();
 		var t = $(this);
-		var newelm = $("<input class='amtpv-editpopup-addpages-name' type='text' value=''/>");
-		t.before( newelm );
-		newelm.focus();
+		var newelm = $("<li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li>");
+		t.parent().prev("ul.amtpv-editpopup-addpages-names-ul").append( newelm );
+		newelm.find("input").focus();
 	});
 	
 	// cancel-link
-	$("span.amtpv-editpopup-addpages-cancel").live("click", function() {
+	$("a.amtpv-editpopup-addpages-cancel").live("click", function() {
 		var t = $(this);
-		var popup = t.closest("span.amtpv-editpopup");
-		popup.find("span.amtpv-editpopup-addpages").hide().remove();
-		popup.find("> span").show();
+		var popup = t.closest("div.amtpv-editpopup");
+		popup.find(".amtpv-editpopup-addpages").hide().remove();
+		popup.find("> div").show();
 	});
 	
 	// woho, add da pages!
-	$("span.amtpv-editpopup-addpages-submit input").live("click", function() {
+	$("form.amtpv-editpopup-addpages").live("submit", function(e) {
 		// fetch all .amtpv-editpopup-addpages-name for this popup
 		//console.log("add pages");
+		
+		e.preventDefault();
+		
 		var t = $(this);
 		var div_popup = t.closest("div.admin-menu-tree-page-view-popup");
 		var post_id = t.closest("div.amtpv-linkwrap").data("post-id");
-		var popup = t.closest("span.amtpv-editpopup");
+		var popup = t.closest("div.amtpv-editpopup");
 		//var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
 
 		var names = popup.find(".amtpv-editpopup-addpages-name");
@@ -364,14 +325,19 @@ jQuery(function($) {
 		}
 		
 		// detect after or inside
-		var type = popup.find(".amtpv-editpopup-addpages-type").val();
+		// var type = popup.find(".amtpv-editpopup-addpages-type").val();
+		var type = popup.find("input[name=amtpv-editpopup-addpages-position]:checked").val();
+		
+		// post status
+		var post_status = popup.find("#amtpv-editpopup-addpages-publish-select").val();
 		
 		var data = {
 			"action": 'admin_menu_tree_page_view_add_page',
 			"pageID": post_id,
 			"type": type,
 			"page_titles": arr_names,
-			"post_type": "page"
+			"post_type": "page",
+			"post_status": post_status
 		};
 		// console.log("data", data);
 

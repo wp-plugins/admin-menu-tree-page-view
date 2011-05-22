@@ -349,11 +349,21 @@ ul.admin-menu-tree-page-tree span.child-count {
 .amtpv-editpopup-editview,
 .amtpv-editpopup-add
  {
-	display: block;
+	/* display: block; */
+/* 	display: inline; */
 }
 .amtpv-editpopup-editview {
-	margin-bottom: .5em;
+	margin-bottom: 10px;
 }
+
+.amtpv-editpopup-edit,
+.amtpv-editpopup-view,
+.amtpv-editpopup-add-after,
+.amtpv-editpopup-add-inside
+ {
+	display: inline;
+}
+
 /* "links" */
 .amtpv-editpopup-edit,
 .amtpv-editpopup-view,
@@ -382,21 +392,51 @@ ul.admin-menu-tree-page-tree span.child-count {
 }
 .amtpv-editpopup-addpages-addpage {
 	display: block;
+/*
 	text-decoration: underline;
 	color: #21759B;
 	cursor: pointer;
-	text-align: right;
+*/
+	margin-left: 3px;
+
+	/* text-align: right; */
 }
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:link,
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:visited,
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:hover,
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:active
+ {
+	font-size: 12px;
+	color: #21759B;
+	padding: 0;
+	margin: 0;
+	background-image: none !important;
+}
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:hover,
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:active,
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:focus
+ {
+	color: #D54E21 !important;
+}
+#adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:focus {
+	outline: invert none medium;
+}
+
 .amtpv-editpopup-addpages-addpage:hover {
-	color: #D54E21;
+	/* color: #D54E21; */
 }
-.amtpv-editpopup-addpages-cancel {
-	text-decoration: underline;
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel {
+	text-decoration: none;
 	color: #21759B;
 	cursor: pointer;
+	background-image: none !important;
+	margin: 0;
+	padding: 0;
+	display: inline;
+	font-size: 12px;
 }
-.amtpv-editpopup-addpages-cancel:hover {
-	color: #D54E21;
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:hover {
+	color: #D54E21 !important;
 }
 
 .amtpv-editpopup-addpages-label
@@ -406,9 +446,16 @@ ul.admin-menu-tree-page-tree span.child-count {
 }
 
 .amtpv-editpopup-addpages-name {
-	width: 200px;
+/* 	width: 200px; */
 }
 
+.amtpv-editpopup-addpages-publish {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+#amtpv-editpopup-addpages-publish-select option {
+	padding: 0;
+}
 .amtpv-editpopup-addpages-publish-checkbox-wrap {
 	display: block;
 	margin-top: 10px;
@@ -436,6 +483,52 @@ ul.admin-menu-tree-page-tree span.child-count {
 
 .amtpv-editpopup-addpages-submit input {
 	cursor: pointer;
+}
+
+.amtpv-editpopup-addpages-names label,
+.amtpv-editpopup-addpages-publish label
+ {
+	display: block;
+}
+
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul.amtpv-editpopup-addpages-names-ul {
+	display: block;
+	overflow: auto;
+	background-color: transparent;
+}
+.amtpv-editpopup-addpages-names-ul li {
+	/* clear: both; */
+	float: left;
+	width: 100%;
+}
+.amtpv-editpopup-addpages-names-ul span {
+	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -3px -228px;
+	margin-top: 7px;
+	margin-right: 3px;
+	float: left;
+	width: 6px;
+	height: 10px;
+}
+.amtpv-editpopup-addpages-names-ul span:hover {
+	/* background-image: url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png); */
+}
+
+.amtpv-editpopup-addpages-names-ul input {
+	float: left;
+	width: 175px;
+}
+
+.amtpv-editpopup-addpages-position {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.amtpv-editpopup-addpages-position label {
+	display: inline;
+	margin-left: 4px;
+}
+.amtpv-editpopup-addpages-position option {
+	padding: 0;
 }
 
 .ui-nestedSortable-error {
