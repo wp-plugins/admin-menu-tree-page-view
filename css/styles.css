@@ -486,8 +486,8 @@ ul.admin-menu-tree-page-tree span.child-count {
 
 
 .amtpv-linkwrap {
-	border-bottom: 1px solid transparent;
-	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent !important;
+	border-top: 1px solid transparent !important;
 }
 .amtpv-linkwrap-hover {
 	background-color: #EAF2FA;
