@@ -8,6 +8,14 @@
 #adminmenu li.wp-has-current-submenu ul.admin-menu-tree-page-tree {
 	border-bottom-width: 0;
 }
+
+/*
+This works, but will break something?
+#adminmenu * {
+	-moz-user-select: text !important;
+}
+*/
+
 li.toplevel_page_admin-menu-tree-page-tree_main .wp-first-item {
 	display: none;
 }
@@ -90,10 +98,10 @@ border-bottom: 1px solid #ccc;
 }
 
 /* sublevels */
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > a {
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-opened > div > div > a {
 	background-image: url(page-small-minus.gif) !important;
 }
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > div > a {
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li.admin-menu-tree-page-view-closed > div > div > a {
 	background-image: url(page-small-plus.gif) !important;
 }
 
@@ -408,9 +416,10 @@ ul.admin-menu-tree-page-tree span.child-count {
  {
 	font-size: 12px;
 	color: #21759B;
-	padding: 0;
+	padding: 0 !important;
 	margin: 0;
 	background-image: none !important;
+	font-weight: normal !important;
 }
 #adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:hover,
 #adminmenu li ul.admin-menu-tree-page-tree li .amtpv-editpopup-addpages-addpage a:active,
@@ -425,7 +434,11 @@ ul.admin-menu-tree-page-tree span.child-count {
 .amtpv-editpopup-addpages-addpage:hover {
 	/* color: #D54E21; */
 }
-#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel {
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:link,
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:visited,
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:hover,
+#adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:active
+ {
 	text-decoration: none;
 	color: #21759B;
 	cursor: pointer;
@@ -434,6 +447,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 	padding: 0;
 	display: inline;
 	font-size: 12px;
+	font-weight: normal !important;
 }
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a.amtpv-editpopup-addpages-cancel:hover {
 	color: #D54E21 !important;
@@ -506,6 +520,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 	/* clear: both; */
 	float: left;
 	width: 100%;
+	-moz-user-select: text !important;
 }
 .amtpv-editpopup-addpages-names-ul span {
 	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -3px -228px;
@@ -522,6 +537,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 .amtpv-editpopup-addpages-names-ul input {
 	float: left;
 	width: 175px;
+	-moz-user-select: text !important;
 }
 
 .amtpv-editpopup-addpages-position {
