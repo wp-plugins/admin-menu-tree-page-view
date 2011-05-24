@@ -82,7 +82,7 @@ border-bottom: 1px solid #ccc;
 }
 
 #adminmenu li ul.admin-menu-tree-page-tree a:hover .admin-menu-tree-page-view-edit:hover {
-	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png);
+/* 	background-image: url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png); */
 }
 
 #adminmenu li ul.admin-menu-tree-page-tree a .admin-menu-tree-page-view-view-link {
@@ -344,7 +344,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 }
 .amtpv-editpopup-hover:hover {
 	/* i know... hover hover! in sweden we call that "kaka på kaka" */
-	opacity: 1;
+	/* opacity: 1; */
 }
 .amtpv-editpopup-editview,
 .amtpv-editpopup-add
@@ -480,7 +480,13 @@ ul.admin-menu-tree-page-tree span.child-count {
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #ccc;
 }
+.amtpv-editpopup-hover-hover {
+	opacity: .9;
+}
 
+.amtpv-editpopup-addpages-submit {
+	margin-top: 10px;
+}
 .amtpv-editpopup-addpages-submit input {
 	cursor: pointer;
 }

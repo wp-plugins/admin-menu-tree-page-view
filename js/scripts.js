@@ -1,44 +1,11 @@
 
 jQuery(function($) {
-
+	
+	// @todo: this is only needed for WordPress earlier than 3.2?
 	setTimeout(function() {
 		jQuery("#toplevel_page_admin-menu-tree-page-tree_main").addClass("wp-menu-open");
 	}, 100);
-
 		
-	// add page
-	$(".admin-menu-tree-page-view-popup-add-here, .admin-menu-tree-page-view-popup-add-inside").live("click", function() {
-		var div_popup = $(this).closest("div.admin-menu-tree-page-view-popup");
-		var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
-		
-		var type = "after";
-		if ($(this).hasClass("admin-menu-tree-page-view-popup-add-inside")) {
-			type = "inside";
-		}
-		
-		var page_title = prompt("Enter name of new page", amtpv_l10n.Untitled);
-		if (page_title) {
-			
-			var data = {
-				"action": 'admin_menu_tree_page_view_add_page',
-				"pageID": post_id,
-				"type": type,
-				"page_title": page_title,
-				"post_type": "page"
-			};
-			jQuery.post(ajaxurl, data, function(response) {
-				if (response != "0") {
-					document.location = response;
-				}
-			});
-			return false;
-		
-		} else {
-			return false;
-		}
-		
-	});
-	
 	// search/filter pages
 	$("li.admin-menu-tree-page-filter input").keyup(function(e) {
 		var ul = $(this).closest("ul.admin-menu-tree-page-tree");
@@ -139,31 +106,38 @@ jQuery(function($) {
 	});
 
 
-
 	// mouse over to show edit-box
-	//$("ul.admin-menu-tree-page-tree li a:first-child").live("mouseenter mouseleave", function(e) {
 	$("ul.admin-menu-tree-page-tree li div.amtpv-linkwrap:first-child").live("mouseenter mouseleave", function(e) {
 
 		var t = $(this);
 		var li = t.closest("li");
-		
 		var popupdiv = li.find("div.amtpv-editpopup:first");
 		var linkwrap = li.find("div.amtpv-linkwrap:first")
 		//var popup_linkwrap = popupdiv.closest("div.amtpv-linkwrap");
 		
 		if (e.type == "mouseenter" || e.type == "mouseover") {
-			var ul = t.closest("ul.admin-menu-tree-page-tree");
-			ul.find("div.amtpv-editpopup").removeClass("amtpv-editpopup-hover");
-			ul.find("div.amtpv-linkwrap").removeClass("amtpv-linkwrap-hover");
 
-			popupdiv.addClass("amtpv-editpopup-hover");
-			linkwrap.addClass("amtpv-linkwrap-hover");
-			
+			var ul = t.closest("ul.admin-menu-tree-page-tree");
+
+			// don't show if another one is in edit mode
+			if (ul.find("div.amtpv-editpopup-is-working").length > 0) {
+			} else {
+				ul.find("div.amtpv-editpopup").removeClass("amtpv-editpopup-hover");
+				ul.find("div.amtpv-linkwrap").removeClass("amtpv-linkwrap-hover");
+				popupdiv.addClass("amtpv-editpopup-hover");
+				linkwrap.addClass("amtpv-linkwrap-hover");
+			}			
 			
 		} else if (e.type == "mouseleave" || e.type == "mouseout") {
+
 			// don't hide if related target is the shadow of the menu, aka #adminmenushadow
 			var do_hide = true;
 			if (e.relatedTarget && e.relatedTarget.id == "adminmenushadow") {
+				do_hide = false;
+			}
+			
+			// also don't hide if wrap div has .amtpv-editpopup-is-working
+			if (linkwrap.hasClass("amtpv-editpopup-is-working")) {
 				do_hide = false;
 			}
 			
@@ -172,6 +146,21 @@ jQuery(function($) {
 				linkwrap.removeClass("amtpv-linkwrap-hover");
 			}
 			
+		}
+	});
+	$("div.amtpv-editpopup").live("mouseenter mouseleave", function(e) {
+		var t = $(this);
+		var li = t.closest("li");
+		var popupdiv = li.find("div.amtpv-editpopup:first");
+		var linkwrap = li.find("div.amtpv-linkwrap:first")
+		
+		if (e.type == "mouseenter" || e.type == "mouseover") {
+			t.addClass("amtpv-editpopup-hover-hover");
+		} else if (e.type == "mouseleave" || e.type == "mouseout") {
+			if (linkwrap.hasClass("amtpv-editpopup-is-working")) {
+			} else {
+				t.removeClass("amtpv-editpopup-hover-hover");
+			}
 		}
 	});
 	
@@ -229,7 +218,6 @@ jQuery(function($) {
 			;
 		add_pages.append( "<div class='amtpv-editpopup-addpages-headline'>Add new page(s)</div>" );
 		add_pages.append( $("<input type='hidden' class='amtpv-editpopup-addpages-type' value='"+type+"' />") );
-		//add_pages.append( $("<div class='amtpv-editpopup-addpages-status'><label>Status</label><select><option value='draft'>Draft</option><option value='publish'>Publish</option></select></div>"));
 
 		// var type = popup.find(".amtpv-editpopup-addpages-type").val();
 		if (type=="after") {
@@ -238,12 +226,12 @@ jQuery(function($) {
 			add_pages.append( $("<div class='amtpv-editpopup-addpages-position'><input type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-after' value='after' /><label for='amtpv-editpopup-addpages-position-after'>After</label> <input checked='checked' type='radio' name='amtpv-editpopup-addpages-position' id='amtpv-editpopup-addpages-position-inside' value='inside' /><label for='amtpv-editpopup-addpages-position-inside'>Inside</label> </div") );	
 		}
 
-		add_pages.append( $("<div class='amtpv-editpopup-addpages-names'><label class='amtpv-editpopup-addpages-label'>Name</label>") );
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-publish'><label for='amtpv-editpopup-addpages-publish-select'>Status</label><select id='amtpv-editpopup-addpages-publish-select' name='status'><option value='publish'>Published</option><option value='pending'>Pending Review</option><option value='draft' selected='selected'>Draft</option></select></div") );
+
+		add_pages.append( $("<div class='amtpv-editpopup-addpages-names'><label class='amtpv-editpopup-addpages-label'>Name(s)</label>") );
 		add_pages.append( $("<ul class='amtpv-editpopup-addpages-names-ul'><li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li></ul>") );
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
 		
-		// add_pages.append( $("<div class='amtpv-editpopup-addpages-publish-checkbox-wrap'><input id='amtpv-editpopup-addpages-publish-checkbox' type='checkbox' value='1'><label for='amtpv-editpopup-addpages-publish-checkbox'>Publish added pages</label></div>") );
-		add_pages.append( $("<div class='amtpv-editpopup-addpages-publish'><label for='amtpv-editpopup-addpages-publish-select'>Status</label><select id='amtpv-editpopup-addpages-publish-select' name='status'><option value='published'>Published</option><option value='pending'>Pending Review</option><option value='draft' selected='selected'>Draft</option></select></div") );
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-submit'><input type='submit' class='button-primary' value='Add' /> or <a class='amtpv-editpopup-addpages-cancel'>cancel</a></div>"));
 		add_pages.find(".amtpv-editpopup-addpages-name").focus();
 		
@@ -290,8 +278,12 @@ jQuery(function($) {
 	$("a.amtpv-editpopup-addpages-cancel").live("click", function() {
 		var t = $(this);
 		var popup = t.closest("div.amtpv-editpopup");
+		var linkwrap = popup.closest("div.amtpv-linkwrap");
+		
 		popup.find(".amtpv-editpopup-addpages").hide().remove();
 		popup.find("> div").show();
+		
+		linkwrap.removeClass("amtpv-editpopup-is-working");
 	});
 	
 	// woho, add da pages!
@@ -302,11 +294,8 @@ jQuery(function($) {
 		e.preventDefault();
 		
 		var t = $(this);
-		var div_popup = t.closest("div.admin-menu-tree-page-view-popup");
 		var post_id = t.closest("div.amtpv-linkwrap").data("post-id");
 		var popup = t.closest("div.amtpv-editpopup");
-		//var post_id = div_popup.data("admin-menu-tree-page-view-current-post-id");
-
 		var names = popup.find(".amtpv-editpopup-addpages-name");
 
 		var arr_names = [];
@@ -323,6 +312,8 @@ jQuery(function($) {
 			alert("Please enter a name for the new page");
 			return false;
 		}
+
+		popup.find("div.amtpv-editpopup-addpages-submit input").val("Adding...");
 		
 		// detect after or inside
 		// var type = popup.find(".amtpv-editpopup-addpages-type").val();
@@ -347,7 +338,7 @@ jQuery(function($) {
 				//if ( ($.client.os == "Mac" && (e.metaKey || e.shiftKey)) || ($.client.os != "Mac" && e.ctrlKey) ) {
 				//	new_win = true;
 				//}
-				return;
+				//return;
 				if (new_win) {
 					window.open(response);
 				} else {

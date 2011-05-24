@@ -259,16 +259,23 @@ function admin_menu_tree_page_view_add_page() {
 	[pageID] => cms-tpv-1318
 	type
 	)
+	action	admin_menu_tree_page_view_add_page
+	pageID	448
+	page_titles[]	pending inside
+	post_status	pending
+	post_type	page
+	type	inside
 	*/
 	$type = $_POST["type"];
 	$pageID = (int) $_POST["pageID"];
-	#$pageID = str_replace("cms-tpv-", "", $pageID);
-	//$page_title = trim($_POST["page_title"]);
 	$post_type = $_POST["post_type"];
 	$wpml_lang = isset($_POST["wpml_lang"]) ? $_POST["wpml_lang"] : "";
-	//if (!$page_title) { $page_title = __("New page", 'admin-menu-tree-page-view'); }
 	$page_titles = (array) $_POST["page_titles"];
 	$ref_post = get_post($pageID);
+	$post_status = $_POST["post_status"];
+	if (!$post_status) { $post_status = "draft"; }
+
+	$post_id_to_return = NULL;
 
 	if ("after" == $type) {
 
@@ -290,7 +297,7 @@ function admin_menu_tree_page_view_add_page() {
 			$post_new["menu_order"] = $ref_post->menu_order+1;
 			$post_new["post_parent"] = $ref_post->post_parent;
 			$post_new["post_type"] = "page";
-			$post_new["post_status"] = "draft";
+			$post_new["post_status"] = $post_status;
 			$post_new["post_title"] = $page_title;
 			$post_new["post_content"] = "";
 			$post_new["post_type"] = $post_type;
@@ -300,11 +307,17 @@ function admin_menu_tree_page_view_add_page() {
 		}
 		
 		$ref_post_id = $ref_post->ID;
+		$loopNum = 0;
 		foreach ($page_titles as $one_page_title) {
-			$newPostID = admin_menu_tree_page_view_add_page_after($ref_post_id, $one_page_title, $post_type);
+			$newPostID = admin_menu_tree_page_view_add_page_after($ref_post_id, $one_page_title, $post_type, $post_status);
 			$new_post = get_post($newPostID);
 			$ref_post_id = $new_post->ID;
+			if ($loopNum == 0) {
+				$post_id_to_return = $newPostID;
+			}
+			$loopNum++;
 		}
+		
 
 	} else if ( "inside" == $type ) {
 
@@ -325,7 +338,7 @@ function admin_menu_tree_page_view_add_page() {
 			$post_new["menu_order"] = 0;
 			$post_new["post_parent"] = $ref_post->ID;
 			$post_new["post_type"] = "page";
-			$post_new["post_status"] = "draft";
+			$post_new["post_status"] = $post_status;
 			$post_new["post_title"] = $page_title;
 			$post_new["post_content"] = "";
 			$post_new["post_type"] = $post_type;
@@ -338,17 +351,23 @@ function admin_menu_tree_page_view_add_page() {
 		// add reversed
 		$ref_post_id = $ref_post->ID;
 		$page_titles = array_reverse($page_titles);
+		$loopNum = 0;
 		foreach ($page_titles as $one_page_title) {
-			$newPostID = admin_menu_tree_page_view_add_page_inside($ref_post_id, $one_page_title, $post_type);
+			$newPostID = admin_menu_tree_page_view_add_page_inside($ref_post_id, $one_page_title, $post_type, $post_status);
 			$new_post = get_post($newPostID);
 			// $ref_post_id = $new_post->ID;
+			if ($loopNum == 0) {
+				$post_id_to_return = $newPostID;
+			}
+			$loopNum++;
 		}
+		$post_id_to_return = $newPostID;
 
 	}
 	
-	if ($newPostID) {
+	if ($post_id_to_return) {
 		// return editlink for the newly created page
-		$editLink = get_edit_post_link($newPostID, '');
+		$editLink = get_edit_post_link($post_id_to_return, '');
 		if ($wpml_lang) {
 			$editLink = add_query_arg("lang", $wpml_lang, $editLink);
 		}
