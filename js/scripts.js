@@ -27,12 +27,10 @@ jQuery(function($) {
 		// hits can be childs of hidden li:s, so we must show the parents of the hits too
 		hits.each(function(i, elm) {
 			var parent = elm.parentNode;
-			console.log(parent);
 			if (parent) {
 				parent = $(parent);
 				// ul -> div -> ul
 				parent.parent().parent().addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
-				//console.log(parent.parent());
 				parent.show();
 			}
 		});
@@ -248,23 +246,6 @@ jQuery(function($) {
 		
 	});
 
-
-	$(".amtpv-editpopup").live("click", function(e) {
-		//e.preventDefault();
-		//e.stopPropagation();
-	});
-	
-	$("input.amtpv-editpopup-addpages-publish-checkbox input").live("click", function(e) {
-		//e.preventDefault();
-		//e.stopPropagation();
-		//var t = $(this);
-		//this.checked = !this.checked;
-		//console.log(t.prop("checked"));
-		//t.prop("checked", true);
-		//t.attr("checked", true);
-		//console.log(t.prop("checked"));
-	});
-
 	// add new page-link
 	$("div.amtpv-editpopup-addpages-addpage a").live("click", function(e) {
 		e.preventDefault();
@@ -289,7 +270,6 @@ jQuery(function($) {
 	// woho, add da pages!
 	$("form.amtpv-editpopup-addpages").live("submit", function(e) {
 		// fetch all .amtpv-editpopup-addpages-name for this popup
-		//console.log("add pages");
 		
 		e.preventDefault();
 		
@@ -330,7 +310,6 @@ jQuery(function($) {
 			"post_type": "page",
 			"post_status": post_status
 		};
-		// console.log("data", data);
 
 		jQuery.post(ajaxurl, data, function(response) {
 			if (response != "0") {
