@@ -228,7 +228,7 @@ jQuery(function($) {
 
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-names'><label class='amtpv-editpopup-addpages-label'>Name(s)</label>") );
 		add_pages.append( $("<ul class='amtpv-editpopup-addpages-names-ul'><li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li></ul>") );
-		add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
+		//add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
 		
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-submit'><input type='submit' class='button-primary' value='Add' /> or <a href='#' class='amtpv-editpopup-addpages-cancel'>cancel</a></div>"));
 		add_pages.find(".amtpv-editpopup-addpages-name").focus();
@@ -238,8 +238,7 @@ jQuery(function($) {
 			"containment": 'parent',
 			"forceHelperSize": true,
 			"forcePlaceholderSize": true,
-			"handle": "span:first",
-			"cursor": "move"
+			"handle": "span:first"
 		});
 		
 		return;
@@ -247,12 +246,31 @@ jQuery(function($) {
 	});
 
 	// add new page-link
+	// @TODO: 
 	$("div.amtpv-editpopup-addpages-addpage a").live("click", function(e) {
 		e.preventDefault();
 		var t = $(this);
 		var newelm = $("<li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li>");
 		t.parent().prev("ul.amtpv-editpopup-addpages-names-ul").append( newelm );
 		newelm.find("input").focus();
+	});
+	
+	// when typing in the input, add another input if we are at the last input
+	// this way we don't have to click that "add page" button. less clicks = more productive.
+	$("input.amtpv-editpopup-addpages-name").live("keyup", function(e) {
+		// check if this is the last li
+		var t = $(this);
+		var ul = t.closest("ul");
+		var li = t.closest("li");
+		
+		// if this input is the last one, and we have entered something, add another one
+		var isLast = (li.index() == ul.find("li").length-1);
+		if (isLast && t.val() != "") {
+			var newelm = $("<li class='hidden'><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li>");
+			ul.append( newelm );
+			newelm.slideDown("fast");
+		}
+		
 	});
 	
 	// cancel-link
