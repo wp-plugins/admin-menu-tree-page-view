@@ -4,7 +4,7 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.4
+Stable tag: 1.5
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
 
@@ -39,8 +39,11 @@ Now the tree with the pages will be visible in the admin menu to the left.
 3. Quickly add single or multiple pages. Great for setting up the structure for a new site.
 
 
-
 == Changelog ==
+
+= 1.5 =
+- Could not edit names in Chrome
+- Removed add page-link. pages are instead added automatically. no more clicks; I think feels so much more effective.
 
 = 1.4 =
 - moved JS and CSS to own folders
