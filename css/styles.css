@@ -562,3 +562,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 .ui-nestedSortable-error {
 	border: 1px solid red;
 }
+
+ul.amtpv-editpopup-addpages-names-ul .ui-state-highlight {
+	display: block;
+}

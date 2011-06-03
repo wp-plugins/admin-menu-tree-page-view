@@ -234,11 +234,12 @@ jQuery(function($) {
 		add_pages.find(".amtpv-editpopup-addpages-name").focus();
 		
 		add_pages.find("ul.amtpv-editpopup-addpages-names-ul").sortable({
-			"axis": "y",
+			"xaxis": "y",
 			"containment": 'parent',
 			"forceHelperSize": true,
 			"forcePlaceholderSize": true,
-			"handle": "span:first"
+			"handle": "span:first",
+			"placeholder": "ui-state-highlight"
 		});
 		
 		return;
