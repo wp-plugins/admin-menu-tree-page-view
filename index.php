@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
-Version: 1.4
+Version: 2.0
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -29,10 +29,11 @@ add_action("admin_head", "admin_menu_tree_page_view_admin_head");
 add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
 add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_view_add_page');
+add_action('wp_ajax_admin_menu_tree_page_view_move_page', 'admin_menu_tree_page_view_move_page');
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "1.4" );
+	define( "admin_menu_tree_page_view_VERSION", "2.0" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 	define( "admin_menu_tree_page_view_DIR", WP_PLUGIN_DIR . '/admin-menu-tree-page-view/' );
 
@@ -77,6 +78,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 	foreach ($pages as $one_page) {
 		$edit_link = get_edit_post_link($one_page->ID);
 		$title = get_the_title($one_page->ID);
+		$title = esc_html($title);
 		
 		// add num of children to the title
 		$post_children = get_children(array(
@@ -150,10 +152,14 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 		// add the view link, hidden, used in popup
 		$permalink = get_permalink($one_page->ID);
-		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
-		$output .= "<span class='admin-menu-tree-page-view-edit'></span>";
+		// $output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
+		// $output .= "<span class='admin-menu-tree-page-view-edit'></span>";
+
+		// drag handle
+		$output .= "<span class='amtpv-draghandle'></span>";
 
 		$output .= "</a>";
+		
 		
 		// popup edit div
 		$output .= "
@@ -379,3 +385,158 @@ function admin_menu_tree_page_view_add_page() {
 	#print_r($post_new);
 	exit;
 }
+
+
+
+// move a post up or down
+// code from our internal theme, "ma-theme"
+function admin_menu_tree_page_view_move_page() {
+
+	/*
+	Array ( [action] => admin_menu_tree_page_view_move_page [post_to_update_id] => 567 [direction] => down )
+	*/
+
+	// fetch all info we need from $_GET-params
+	$post_to_update_id = (int) $_POST["post_to_update_id"];
+	$direction = $_POST["direction"];
+	$post_to_update = get_post($post_to_update_id);
+
+	// get all posts with the same parent as our article
+	$args = array(
+		"post_type" => $post_to_update->post_type,
+		"orderby" => "menu_order",
+		"order" => "ASC",
+		"post_parent" => $post_to_update->post_parent,
+		"post_status" => "any",
+		"numberposts" => -1
+	);
+	$posts = get_posts($args);
+	
+	if ($direction == "down") {
+
+		// let's move the article down		
+		// update menu order of all pages
+		/*
+		
+		1 Page A
+		2 Page B
+		5 Page C <- flytta
+		7 Page D <- menu_order inte alltid vårt menu_order +1, kan "glappa" liksom
+		8 Page E
+		9 Page F
+		
+		Ta reda på aktuellt menu_order
+		Ta reda på efterföljande posts menu_order
+		Byt plats på menu_order på vald artikel + efterföljande artikel
+		
+		*/
+		
+		// loop until we find our post
+		$did_find_post = false;
+		foreach ($posts as $one_post) {
+			if ($one_post->ID == $post_to_update->ID) {
+				$did_find_post = true;
+				break;
+			}
+		}
+		
+		if ($did_find_post) {
+			// cool, we found our post
+			// but do we have a next post too?
+			$post_next = current($posts); // not next() as I thought first
+			if ($post_next) {
+				// yep, got the next one
+				
+				// there can be situations where both posts have the same menu_order
+				// it that case, increase the menu_order of all posts above and including our next post
+				// and then do the swap
+				// clean_post_cache( $id ) ?
+				if ($post_to_update->menu_order == $post_next->menu_order) {
+					// echo "<p>Both posts have the same menu_order. Updating menu_order for all posts that are after post_next...</p>";
+					
+					// first update menu_order of the next post
+					$post_next->menu_order++;
+					wp_update_post(array(
+						"ID" => $post_next->ID,
+						"menu_order" => $post_next->menu_order
+					));
+
+					// and then loop through the rest of the posts in $posts
+					$one_post = null;
+					while ($one_post = next($posts)) {
+						wp_update_post(array(
+							"ID" => $one_post->ID,
+							"menu_order" => $one_post->menu_order + 1
+						));
+					}
+				}
+				
+				// now swap the order of our posts
+				wp_update_post(array(
+					"ID" => $post_to_update->ID,
+					"menu_order" => $post_next->menu_order
+				));
+				wp_update_post(array(
+					"ID" => $post_next->ID,
+					"menu_order" => $post_to_update->menu_order
+				));
+				
+			}
+		}
+
+		// echo "move down";
+		
+	} elseif ($direction == "up") {
+
+		// echo "move up";
+		
+		/*
+		Move article up
+		
+		0 Page A
+		1 Page B 
+		2 Page C
+		
+		2 Page B
+		5 Page B <- kan ha samma menu_order..
+		5 Page C <- menu_order inte alltid vårt menu_order -1, kan "glappa"
+		7 Page D <- flytta
+		8 Page E
+		9 Page F
+		
+		Ta reda på aktuellt menu_order
+		Ta reda på föregående posts menu_order
+		Byt plats på menu_order på vald artikel + föregående artikel
+		
+		*/
+		
+		// find our post and also find the previous post
+		$prev_post = null;
+		$found_post = false;
+		foreach ($posts as $one_post) {
+			if ($one_post->ID == $post_to_update->ID) {
+				$found_post = true;
+				break;
+			}
+			$prev_post = $one_post;
+		}
+		
+		if ($found_post && $prev_post) {
+			// swap the order of our posts
+			wp_update_post(array(
+				"ID" => $post_to_update->ID,
+				"menu_order" => $prev_post->menu_order
+			));
+			wp_update_post(array(
+				"ID" => $prev_post->ID,
+				"menu_order" => $post_to_update->menu_order
+			));
+		} else {
+			// nah, don't do it!
+		}
+	} // if direction
+	
+	echo 1;
+	die();
+
+} // move post
