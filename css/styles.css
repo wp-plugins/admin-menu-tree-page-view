@@ -566,3 +566,13 @@ ul.admin-menu-tree-page-tree span.child-count {
 ul.amtpv-editpopup-addpages-names-ul .ui-state-highlight {
 	display: block;
 }
+
+.amtpv-draghandle {
+	display: none;
+	position: absolute;
+	width: 7px;
+	height: 8px;
+	left: 0;
+	top: 5px;
+	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -5px -228px;
+}

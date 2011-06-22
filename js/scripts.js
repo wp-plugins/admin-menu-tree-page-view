@@ -247,7 +247,6 @@ jQuery(function($) {
 	});
 
 	// add new page-link
-	// @TODO: 
 	$("div.amtpv-editpopup-addpages-addpage a").live("click", function(e) {
 		e.preventDefault();
 		var t = $(this);
@@ -347,6 +346,78 @@ jQuery(function($) {
 		});
 
 	});
+	
+	// make the tree sortable
+	$("ul.admin-menu-tree-page-tree, ul.admin-menu-tree-page-tree ul").sortable({
+		"axis": "y",
+		"containment": 'parent',
+		"forceHelperSize": true,
+		"forcePlaceholderSize": true,
+		"delay": 20,
+		"distance": 5,
+		"xhandle": "span.amtpv-draghandle",
+		"revert": true,
+		"start": function(event, ui) {
+			var li = $(ui.item);
+			//console.log("index start", li.index());
+			li.data("startindex", li.index());
+		},
+		"update": function(event, ui) {
+			console.log(event);
+			console.log(ui);
+			/*
+			ui.item <- the post that was moved
+			send post id to server, with info about post above or under, depending on if there is a post above/under
+			*/
+			var li = $(ui.item);
+			var a = li.find("a:first");
+			var post_id = a.data("post-id");
+			
+			//console.log("index update", li.index());
+			// check if we have a post above
+			/*
+			var prev = li.prev();
+			var aboveOrNextItem;
+			var aboveOrNext;
+			if (prev.length > 0) {
+				aboveOrNextItem = prev;
+				aboveOrNext = "above";
+			} else {
+				// ... or below
+				var next = li.next();
+				aboveOrNextItem = next;
+				aboveOrNext = "below";
+			}
+
+			// get id of above or below post
+			var aboveOrNextPostID = $(aboveOrNextItem).find("a:first").data("post-id");
+			*/
+			
+			// ok, i thought wrong. we "only" need to find the direction instead!
+			// flytt upp = start > update
+			// flytt ner = start < update
+			var startindex = li.data("startindex");
+			var updateindex = li.index();
+			var direction;
+			if (startindex > updateindex) {
+				direction = "up";
+			} else {
+				direction = "down";
+			}
+			//console.log("direction", direction);
+			
+			// now we have all we need, tell the server to do the move
+			$.post(ajaxurl, {
+				"action": "admin_menu_tree_page_view_move_page",
+				"post_to_update_id": post_id,
+				"direction": direction
+			}, function(data) {
+				console.log(data);
+			});
+			
+		}
+	});
+
 
 });
 
