@@ -4,9 +4,9 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.4
+Stable tag: 2.1
 
-Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
+Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
 
 == Description ==
 
@@ -14,10 +14,11 @@ This WordPress plugin adds all your pages to the admin menu, so all your pages w
 no matter where you are in the admin area. You can also add pages directly in the tree and you can
 quickly find your pages by using the search box.
 
+**Version 2.0 update:** Now you can order your pages with drag-and-drop!
+
 Works perfect in CMS-like WordPress installations with lots of pages in a tree hierarchy.
 
-#### More advanced page tree with drag-and-drop support
-I have made an even more advanced version of the tree, where you also can search and re-order the pages. It's called 
+If you want a tree with all your pages, but don't want it visible all the time, please check out my other plugin
 [CMS Tree Page View](http://wordpress.org/extend/plugins/cms-tree-page-view/).
 
 #### Donation and more plugins
@@ -34,11 +35,26 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Screenshots ==
 
-1. The menu page tree with all your pages. Pretty neat, eh? You add new pages too. And search your pages. In conclusion: with this plugin you will be a page kung fu master.
+1. You can expand/collapse sub-pages. Keeps the meny compact, but gives you the option to instantly dig deep down the page hierarchy.
 2. Search your pages in real time. Try it; it's wonderful! ;)
-3. You can expand/collapse sub-pages. Keeps the meny compact, but gives you the option to instantly dig deep down the page hierarchy.
+3. Quickly add single or multiple pages. Great for setting up the structure for a new site.
+
 
 == Changelog ==
+
+= 2.1 =
+- Fixed: forgot to remove console.log at some places. sorry!
+- Updated: Drag and drop now works better. Still not 100%, but I can't find the reason why I does order the pages a bit wrong sometimes. Any ideas?
+
+= 2.0 =
+- Added:Now you can order posts with drag and drop. Just click and hold mouse button and move post up/down. But please note that you can only move posts that have the same level/depth in the tree.
+
+= 1.6 =
+- Fixed: post titles where not escaped.
+
+= 1.5 =
+- Could not edit names in Chrome
+- Removed add page-link. pages are instead added automatically. no more clicks; I think feels so much more effective.
 
 = 1.4 =
 - moved JS and CSS to own folders
