@@ -359,12 +359,9 @@ jQuery(function($) {
 		"revert": true,
 		"start": function(event, ui) {
 			var li = $(ui.item);
-			//console.log("index start", li.index());
 			li.data("startindex", li.index());
 		},
 		"update": function(event, ui) {
-			console.log(event);
-			console.log(ui);
 			/*
 			ui.item <- the post that was moved
 			send post id to server, with info about post above or under, depending on if there is a post above/under
@@ -373,13 +370,11 @@ jQuery(function($) {
 			var a = li.find("a:first");
 			var post_id = a.data("post-id");
 			
-			//console.log("index update", li.index());
 			// check if we have a post above
-			/*
 			var prev = li.prev();
 			var aboveOrNextItem;
 			var aboveOrNext;
-			if (prev.length > 0) {
+			if (prev.length > 0 && !prev.hasClass("admin-menu-tree-page-filter")) {
 				aboveOrNextItem = prev;
 				aboveOrNext = "above";
 			} else {
@@ -388,12 +383,9 @@ jQuery(function($) {
 				aboveOrNextItem = next;
 				aboveOrNext = "below";
 			}
-
 			// get id of above or below post
 			var aboveOrNextPostID = $(aboveOrNextItem).find("a:first").data("post-id");
-			*/
 			
-			// ok, i thought wrong. we "only" need to find the direction instead!
 			// flytt upp = start > update
 			// flytt ner = start < update
 			var startindex = li.data("startindex");
@@ -404,15 +396,15 @@ jQuery(function($) {
 			} else {
 				direction = "down";
 			}
-			//console.log("direction", direction);
 			
 			// now we have all we need, tell the server to do the move
 			$.post(ajaxurl, {
 				"action": "admin_menu_tree_page_view_move_page",
 				"post_to_update_id": post_id,
-				"direction": direction
+				"direction": direction,
+				"aboveOrNextPostID": aboveOrNextPostID
 			}, function(data) {
-				console.log(data);
+				// console.log(data);
 			});
 			
 		}

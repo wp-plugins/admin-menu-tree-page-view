@@ -4,15 +4,17 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 2.0
+Stable tag: 2.1
 
-Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
+Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
 
 == Description ==
 
 This WordPress plugin adds all your pages to the admin menu, so all your pages will always be available within just one click, 
 no matter where you are in the admin area. You can also add pages directly in the tree and you can
 quickly find your pages by using the search box.
+
+**Version 2.0 update:** Now you can order your pages with drag-and-drop!
 
 Works perfect in CMS-like WordPress installations with lots of pages in a tree hierarchy.
 
@@ -39,6 +41,10 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.1 =
+- Fixed: forgot to remove console.log at some places. sorry!
+- Updated: Drag and drop now works better. Still not 100%, but I can't find the reason why I does order the pages a bit wrong sometimes. Any ideas?
 
 = 2.0 =
 - Added:Now you can order posts with drag and drop. Just click and hold mouse button and move post up/down. But please note that you can only move posts that have the same level/depth in the tree.
