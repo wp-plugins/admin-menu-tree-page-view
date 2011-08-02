@@ -3,8 +3,8 @@ Contributors: eskapism, MarsApril
 Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
-Tested up to: 3.0
-Stable tag: 2.1
+Tested up to: 3.2.1
+Stable tag: 2.2
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
 
@@ -42,12 +42,17 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Changelog ==
 
+= 2.2 =
+- Fixed: icons where misplaced when using minimized admin menu.
+- Fixed: page actions where not visible when using minimized admin menu.
+- Fixed: hopefully works better with WPML now.
+
 = 2.1 =
 - Fixed: forgot to remove console.log at some places. sorry!
 - Updated: Drag and drop now works better. Still not 100%, but I can't find the reason why I does order the pages a bit wrong sometimes. Any ideas?
 
 = 2.0 =
-- Added:Now you can order posts with drag and drop. Just click and hold mouse button and move post up/down. But please note that you can only move posts that have the same level/depth in the tree.
+- Added: Now you can order posts with drag and drop. Just click and hold mouse button and move post up/down. But please note that you can only move posts that have the same level/depth in the tree.
 
 = 1.6 =
 - Fixed: post titles where not escaped.
