@@ -228,18 +228,18 @@ jQuery(function($) {
 
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-names'><label class='amtpv-editpopup-addpages-label'>Name(s)</label>") );
 		add_pages.append( $("<ul class='amtpv-editpopup-addpages-names-ul'><li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li></ul>") );
-		add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
+		//add_pages.append( $("<div class='amtpv-editpopup-addpages-addpage'><a href='#'>+ page</a></div></div>"));
 		
 		add_pages.append( $("<div class='amtpv-editpopup-addpages-submit'><input type='submit' class='button-primary' value='Add' /> or <a href='#' class='amtpv-editpopup-addpages-cancel'>cancel</a></div>"));
 		add_pages.find(".amtpv-editpopup-addpages-name").focus();
 		
 		add_pages.find("ul.amtpv-editpopup-addpages-names-ul").sortable({
-			"axis": "y",
+			"xaxis": "y",
 			"containment": 'parent',
 			"forceHelperSize": true,
 			"forcePlaceholderSize": true,
 			"handle": "span:first",
-			"cursor": "move"
+			"placeholder": "ui-state-highlight"
 		});
 		
 		return;
@@ -253,6 +253,24 @@ jQuery(function($) {
 		var newelm = $("<li><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li>");
 		t.parent().prev("ul.amtpv-editpopup-addpages-names-ul").append( newelm );
 		newelm.find("input").focus();
+	});
+	
+	// when typing in the input, add another input if we are at the last input
+	// this way we don't have to click that "add page" button. less clicks = more productive.
+	$("input.amtpv-editpopup-addpages-name").live("keyup", function(e) {
+		// check if this is the last li
+		var t = $(this);
+		var ul = t.closest("ul");
+		var li = t.closest("li");
+		
+		// if this input is the last one, and we have entered something, add another one
+		var isLast = (li.index() == ul.find("li").length-1);
+		if (isLast && t.val() != "") {
+			var newelm = $("<li class='hidden'><span></span><input class='amtpv-editpopup-addpages-name' type='text' value=''/></li>");
+			ul.append( newelm );
+			newelm.slideDown("fast");
+		}
+		
 	});
 	
 	// cancel-link
@@ -328,6 +346,70 @@ jQuery(function($) {
 		});
 
 	});
+	
+	// make the tree sortable
+	$("ul.admin-menu-tree-page-tree, ul.admin-menu-tree-page-tree ul").sortable({
+		"axis": "y",
+		"containment": 'parent',
+		"forceHelperSize": true,
+		"forcePlaceholderSize": true,
+		"delay": 20,
+		"distance": 5,
+		"xhandle": "span.amtpv-draghandle",
+		"revert": true,
+		"start": function(event, ui) {
+			var li = $(ui.item);
+			li.data("startindex", li.index());
+		},
+		"update": function(event, ui) {
+			/*
+			ui.item <- the post that was moved
+			send post id to server, with info about post above or under, depending on if there is a post above/under
+			*/
+			var li = $(ui.item);
+			var a = li.find("a:first");
+			var post_id = a.data("post-id");
+			
+			// check if we have a post above
+			var prev = li.prev();
+			var aboveOrNextItem;
+			var aboveOrNext;
+			if (prev.length > 0 && !prev.hasClass("admin-menu-tree-page-filter")) {
+				aboveOrNextItem = prev;
+				aboveOrNext = "above";
+			} else {
+				// ... or below
+				var next = li.next();
+				aboveOrNextItem = next;
+				aboveOrNext = "below";
+			}
+			// get id of above or below post
+			var aboveOrNextPostID = $(aboveOrNextItem).find("a:first").data("post-id");
+			
+			// flytt upp = start > update
+			// flytt ner = start < update
+			var startindex = li.data("startindex");
+			var updateindex = li.index();
+			var direction;
+			if (startindex > updateindex) {
+				direction = "up";
+			} else {
+				direction = "down";
+			}
+			
+			// now we have all we need, tell the server to do the move
+			$.post(ajaxurl, {
+				"action": "admin_menu_tree_page_view_move_page",
+				"post_to_update_id": post_id,
+				"direction": direction,
+				"aboveOrNextPostID": aboveOrNextPostID
+			}, function(data) {
+				// console.log(data);
+			});
+			
+		}
+	});
+
 
 });
 
