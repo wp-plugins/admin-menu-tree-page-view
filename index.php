@@ -25,6 +25,11 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// No need to run all code if we're not on an admin page
+if (!is_admin()) {
+	return;
+}
+
 add_action("admin_head", "admin_menu_tree_page_view_admin_head");
 add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
@@ -207,6 +212,7 @@ function admin_menu_tree_page_view_admin_menu() {
 	#add_menu_page( "title", "Simple Menu Pages", "edit_pages", "admin-menu-tree-page-tree_main", "bonnyFunction", null, 5);
 
 	// end link that is written automatically by WP, and begin ul
+	// <!-- <span class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</span> -->
 	$output = "
 		</a>
 		<ul class='admin-menu-tree-page-tree'>

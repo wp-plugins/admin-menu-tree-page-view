@@ -109,6 +109,7 @@ border-bottom: 1px solid #ccc;
 }
 
 
+span.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-filter
  {
@@ -121,6 +122,10 @@ li.admin-menu-tree-page-filter
 	border-left-width: 0px;
 	border-right-style: solid;
 	border-right-width: 0px;
+}
+span.admin-menu-tree-page-tree_headline {
+	position: relative;
+	left: -12px;
 }
 
 .wp-has-current-submenu li.admin-menu-tree-page-tree_headline,

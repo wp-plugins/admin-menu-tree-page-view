@@ -410,6 +410,22 @@ jQuery(function($) {
 		}
 	});
 
+	// click "pages" headline to hide or show the tree
+	// @todo: remember state in a cookie, to be read by PHP
+	$(".admin-menu-tree-page-tree_headline").live("click", function() {
+		var t = $(this);
+		var ul = t.closest("ul");
+		var lis = ul.find("li").not(".admin-menu-tree-page-tree_headline"); // also consider .admin-menu-tree-page-filter
+		if (ul.hasClass("admin-menu-tree-page-view-closed")) {
+			// it's closed, so open it
+			ul.addClass("admin-menu-tree-page-view-opened").removeClass("admin-menu-tree-page-view-closed");
+			lis.show();
+		} else {
+			// it's opened, so close it
+			ul.removeClass("admin-menu-tree-page-view-opened").addClass("admin-menu-tree-page-view-closed");
+			lis.hide();
+		}
+	});
 
 });
 
