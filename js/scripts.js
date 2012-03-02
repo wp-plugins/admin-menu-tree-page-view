@@ -412,6 +412,7 @@ jQuery(function($) {
 
 	// click "pages" headline to hide or show the tree
 	// @todo: remember state in a cookie, to be read by PHP
+	// @todo: also add arrow or something that shows state
 	$(".admin-menu-tree-page-tree_headline").live("click", function() {
 		var t = $(this);
 		var ul = t.closest("ul");
