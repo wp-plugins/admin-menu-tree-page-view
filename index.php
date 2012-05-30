@@ -132,6 +132,8 @@ function admin_menu_tree_page_view_get_pages($args) {
 			if ($_GET["post"] != $one_page->ID) {
 				$post_to_check_parents_for = $_GET["post"];
 				// seems to be a problem with get_post_ancestors (yes, it's in the trac too)
+				// Long time since I wrote this, but perhaps this is the problem (adding for future reference):
+				// http://core.trac.wordpress.org/ticket/10381
 				wp_cache_delete($post_to_check_parents_for, 'posts');
 				$one_page_parents = get_post_ancestors($post_to_check_parents_for);
 				if (in_array($one_page->ID, $one_page_parents)) {
