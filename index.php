@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
-Version: 1.4
+Version: 2.3
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -25,14 +25,20 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// No need to run all code if we're not on an admin page
+if (!is_admin()) {
+	return;
+}
+
 add_action("admin_head", "admin_menu_tree_page_view_admin_head");
 add_action('admin_menu', 'admin_menu_tree_page_view_admin_menu');
 add_action("admin_init", "admin_menu_tree_page_view_admin_init");
 add_action('wp_ajax_admin_menu_tree_page_view_add_page', 'admin_menu_tree_page_view_add_page');
+add_action('wp_ajax_admin_menu_tree_page_view_move_page', 'admin_menu_tree_page_view_move_page');
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "1.4" );
+	define( "admin_menu_tree_page_view_VERSION", "2.3" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 	define( "admin_menu_tree_page_view_DIR", WP_PLUGIN_DIR . '/admin-menu-tree-page-view/' );
 
@@ -58,6 +64,40 @@ function admin_menu_tree_page_view_admin_head() {
 
 }
 
+/**
+ * I know, I know. Should have made a class from the beginning...
+ */
+class admin_menu_tree_page_view {
+	
+	public static $arr_all_pages_id_parent;
+	public static $one_page_parents;
+	
+	static function get_all_pages_id_parent() {
+		if (!isset(admin_menu_tree_page_view::$arr_all_pages_id_parent)) {
+			// get all pages, once, to spare some queries looking for children
+			$all_pages = get_posts(array(
+				"numberposts" 	=> -1,
+				"post_type"		=> "page",
+				"post_status" 	=> "any",
+				"fields"		=> "id=>parent"
+			));
+			//print_r($all_pages);exit;
+			admin_menu_tree_page_view::$arr_all_pages_id_parent = $all_pages;
+		}
+		return admin_menu_tree_page_view::$arr_all_pages_id_parent;
+	}
+	
+	static function get_post_ancestors($post_to_check_parents_for) {
+		if (!isset(admin_menu_tree_page_view::$one_page_parents)) {
+			wp_cache_delete($post_to_check_parents_for, 'posts');
+			$one_page_parents = get_post_ancestors($post_to_check_parents_for);
+			admin_menu_tree_page_view::$one_page_parents = $one_page_parents;
+		}
+		return admin_menu_tree_page_view::$one_page_parents;
+	}
+	
+}
+
 function admin_menu_tree_page_view_get_pages($args) {
 
 	$defaults = array(
@@ -67,9 +107,13 @@ function admin_menu_tree_page_view_get_pages($args) {
 		"numberposts" => "-1",
 		"orderby" => "menu_order",
 		"order" => "ASC",
-		"post_status" => "any"
+		"post_status" => "any",
+		"suppress_filters" => 0 // suppose to fix problems with WPML
 	);
 	$args = wp_parse_args( $args, $defaults );
+
+	// contains all page ids as keys and their parent as the val
+	$arr_all_pages_id_parent = admin_menu_tree_page_view::get_all_pages_id_parent();
 
 	$pages = get_posts($args);
 	$output = "";
@@ -77,16 +121,24 @@ function admin_menu_tree_page_view_get_pages($args) {
 	foreach ($pages as $one_page) {
 		$edit_link = get_edit_post_link($one_page->ID);
 		$title = get_the_title($one_page->ID);
+		$title = esc_html($title);
 		
 		// add num of children to the title
-		$post_children = get_children(array(
-			"post_parent" => $one_page->ID,
-			"post_type" => "page"
-		));
-		$post_children_count = sizeof($post_children);
-		// var_dump($post_children_count);
-		if ($post_children_count>0) {
+		// @done: this is still being done for each page, even if it does not have children. can we check if it has before?
+		// we could fetch all pages once and store them in an array and then just check if the array has our id in it. yeah. let's do that.
+		// if our page id exists in $arr_all_pages_id_parent and has a value
+		// so result is from 690 queries > 474 = 216 queries less. still many..
+		// from 474 to 259 = 215 less
+		// so total from 690 to 259 = 431 queries less! grrroooovy
+		if (in_array($one_page->ID, $arr_all_pages_id_parent)) {
+			$post_children = get_children(array(
+				"post_parent" => $one_page->ID,
+				"post_type" => "page"
+			));
+			$post_children_count = sizeof($post_children);
 			$title .= " <span class='child-count'>($post_children_count)</span>";
+		} else {
+			$post_children_count = 0;
 		}
 		
 		$class = "";
@@ -106,8 +158,13 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$args_childs["parent"] = $one_page->ID;
 		$args_childs["post_parent"] = $one_page->ID;
 		$args_childs["child_of"] = $one_page->ID;
-		$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
+
+		// can we run this only if the page actually has children? is there a property in the result of get_children for this?
+		// eh, you moron, we already got that info in $post_children_count!
+		// so result is from 690 queries > 474 = 216 queries less. still many..
+		$str_child_output = "";
 		if ($post_children_count>0) {
+			$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
 			$class .= " admin-menu-tree-page-view-has-childs";
 		}
 		
@@ -124,8 +181,12 @@ function admin_menu_tree_page_view_get_pages($args) {
 			if ($_GET["post"] != $one_page->ID) {
 				$post_to_check_parents_for = $_GET["post"];
 				// seems to be a problem with get_post_ancestors (yes, it's in the trac too)
-				wp_cache_delete($post_to_check_parents_for, 'posts');
-				$one_page_parents = get_post_ancestors($post_to_check_parents_for);
+				// Long time since I wrote this, but perhaps this is the problem (adding for future reference):
+				// http://core.trac.wordpress.org/ticket/10381
+				
+				// @done: this is done several times. only do it once please
+				// before: 441. after: 43
+				$one_page_parents = admin_menu_tree_page_view::get_post_ancestors($post_to_check_parents_for);
 				if (in_array($one_page->ID, $one_page_parents)) {
 					$isOpened = TRUE;
 				}
@@ -150,10 +211,14 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 		// add the view link, hidden, used in popup
 		$permalink = get_permalink($one_page->ID);
-		$output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
-		$output .= "<span class='admin-menu-tree-page-view-edit'></span>";
+		// $output .= "<span class='admin-menu-tree-page-view-view-link'>$permalink</span>";
+		// $output .= "<span class='admin-menu-tree-page-view-edit'></span>";
+
+		// drag handle
+		$output .= "<span class='amtpv-draghandle'></span>";
 
 		$output .= "</a>";
+		
 		
 		// popup edit div
 		$output .= "
@@ -200,6 +265,7 @@ function admin_menu_tree_page_view_admin_menu() {
 	#add_menu_page( "title", "Simple Menu Pages", "edit_pages", "admin-menu-tree-page-tree_main", "bonnyFunction", null, 5);
 
 	// end link that is written automatically by WP, and begin ul
+	// <!-- <span class='admin-menu-tree-page-tree_headline'>" . __("Pages", 'admin-menu-tree-page-view') . "</span> -->
 	$output = "
 		</a>
 		<ul class='admin-menu-tree-page-tree'>
@@ -379,3 +445,116 @@ function admin_menu_tree_page_view_add_page() {
 	#print_r($post_new);
 	exit;
 }
+
+
+
+// move a post up or down
+// code from my other plugin cms tree page view
+function admin_menu_tree_page_view_move_page() {
+
+	/*
+	Array ( [action] => admin_menu_tree_page_view_move_page [post_to_update_id] => 567 [direction] => down )
+	*/
+
+	// fetch all info we need from $_GET-params
+	$post_to_update_id = (int) $_POST["post_to_update_id"];
+	$direction = $_POST["direction"];
+	$post_to_update = get_post($post_to_update_id);
+	$aboveOrNextPostID = $_POST["aboveOrNextPostID"];
+	$post_aboveOrNext = get_post($aboveOrNextPostID);
+
+	/*
+	 the node that was moved,
+	 the reference node in the move,
+	 the new position relative to the reference node (one of "before", "after" or "inside"), 
+	 	inside = man placerar den under en sida som inte har några barn?
+	*/
+
+	global $wpdb;
+	
+	$node_id = (int) $_POST["post_to_update_id"]; // the node that was moved
+	$ref_node_id = (int) $_POST["aboveOrNextPostID"];
+	$type = $_POST["direction"];
+	
+	$_POST["skip_sitepress_actions"] = true; // sitepress.class.php->save_post_actions
+	
+	if ($node_id && $ref_node_id) {
+		#echo "\nnode_id: $node_id";
+		#echo "\ntype: $type";	
+		
+		$post_node = get_post($node_id);
+		$post_ref_node = get_post($ref_node_id);
+		
+		// first check that post_node (moved post) is not in trash. we do not move them
+		if ($post_node->post_status == "trash") {
+			exit;
+		}
+
+		if ( "inside" == $type ) {
+			// note: inside does not exist for Admin Menu Tree Page View
+			
+			// post_node is moved inside ref_post_node
+			// add ref_post_node as parent to post_node and set post_nodes menu_order to 0
+			// @todo: shouldn't menu order of existing items be changed?
+			$post_to_save = array(
+				"ID" => $post_node->ID,
+				"menu_order" => 0,
+				"post_parent" => $post_ref_node->ID
+			);
+			wp_update_post( $post_to_save );
+			
+			echo "did inside";
+			
+		} elseif ( "up" == $type ) {
+		
+			// post_node is placed before ref_post_node
+			// update menu_order of all pages with a menu order more than or equal ref_node_post and with the same parent as ref_node_post
+			// we do this so there will be room for our page if it's the first page
+			// so: no move of individial posts yet
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE post_parent = %d", $post_ref_node->post_parent ) );
+
+			// update menu order with +1 for all pages below ref_node, this should fix the problem with "unmovable" pages because of
+			// multiple pages with the same menu order (...which is not the fault of this plugin!)
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE menu_order >= %d", $post_ref_node->menu_order+1) );
+			
+			$post_to_save = array(
+				"ID" => $post_node->ID,
+				"menu_order" => $post_ref_node->menu_order,
+				"post_parent" => $post_ref_node->post_parent
+			);
+			wp_update_post( $post_to_save );
+
+			echo "did before";
+
+		} elseif ( "down" == $type ) {
+		
+			// post_node is placed after ref_post_node
+			
+			// update menu_order of all posts with the same parent ref_post_node and with a menu_order of the same as ref_post_node, but do not include ref_post_node
+			// +2 since multiple can have same menu order and we want our moved post to have a unique "spot"
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+2 WHERE post_parent = %d AND menu_order >= %d AND id <> %d ", $post_ref_node->post_parent, $post_ref_node->menu_order, $post_ref_node->ID ) );
+
+			// update menu_order of post_node to the same that ref_post_node_had+1
+			#$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = %d, post_parent = %d WHERE ID = %d", $post_ref_node->menu_order+1, $post_ref_node->post_parent, $post_node->ID ) );
+
+			$post_to_save = array(
+				"ID" => $post_node->ID,
+				"menu_order" => $post_ref_node->menu_order+1,
+				"post_parent" => $post_ref_node->post_parent
+			);
+			wp_update_post( $post_to_save );
+			
+			echo "did after";
+		}
+		
+		#echo "ok"; // I'm done here!
+		
+	} else {
+		// error
+	}	
+	echo 1;
+	die();
+
+} // move post
+
+

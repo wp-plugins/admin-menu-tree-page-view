@@ -9,12 +9,6 @@
 	border-bottom-width: 0;
 }
 
-/*
-This works, but will break something?
-#adminmenu * {
-	-moz-user-select: text !important;
-}
-*/
 
 li.toplevel_page_admin-menu-tree-page-tree_main .wp-first-item {
 	display: none;
@@ -50,6 +44,15 @@ li.toplevel_page_admin-menu-tree-page-tree_main .wp-submenu a {
 	border-bottom: 1px solid transparent;
 	border-top: 1px solid transparent;
 }
+.js.folded #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li div > a {
+	padding-left: 19px;
+}
+
+/* hope this does not break anything.. */
+#menu-pages .wp-submenu.sub-open {
+	overflow: visible !important;
+}
+
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li a:hover {
 	background-color: #eaf2fa !important;
 	/*
@@ -106,6 +109,7 @@ border-bottom: 1px solid #ccc;
 }
 
 
+span.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-tree_headline,
 li.admin-menu-tree-page-filter
  {
@@ -118,6 +122,10 @@ li.admin-menu-tree-page-filter
 	border-left-width: 0px;
 	border-right-style: solid;
 	border-right-width: 0px;
+}
+span.admin-menu-tree-page-tree_headline {
+	position: relative;
+	left: -12px;
 }
 
 .wp-has-current-submenu li.admin-menu-tree-page-tree_headline,
@@ -140,6 +148,9 @@ li.admin-menu-tree-page-filter
 	font-weight: normal;
 	color: #21759B;
 }
+.js.folded #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li a {
+	padding-left: 27px;
+}
 
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li li a,
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li li a:hover
@@ -149,6 +160,9 @@ li.admin-menu-tree-page-filter
 	background-position: 25px 2px !important;
 	font-weight: normal;
 	color: #21759B;
+}
+.js.folded #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li li a {
+	padding-left: 37px;
 }
 
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li li li a,
@@ -160,7 +174,9 @@ li.admin-menu-tree-page-filter
 	font-weight: normal;
 	color: #21759B;
 }
-
+.js.folded #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li li li a {
+	padding-left: 47px;
+}
 
 /* make them bold too */
 #adminmenu li .wp-submenu ul.admin-menu-tree-page-tree li ul li.current a,
@@ -244,6 +260,12 @@ li.admin-menu-tree-page-filter
 .admin-menu-tree-page-filter {
 	position: relative;
 }
+
+/* This works, but will break something? */
+#adminmenu * {
+	-moz-user-select: text !important;
+}
+
 #adminmenu .admin-menu-tree-page-filter input {
 	width: 125px;
 	font-size: 10px;
@@ -251,9 +273,14 @@ li.admin-menu-tree-page-filter
 	padding: 2px;
 	-webkit-user-select: text;
 	-moz-user-select: text;
+	-khtml-user-select: text;
+	user-select: text;
 }
 #menu-pages * {
+	-webkit-user-select: text;
 	-moz-user-select: text;
+	-khtml-user-select: text;
+	user-select: text;
 }
 
 .admin-menu-tree-page-filter-reset {
@@ -520,15 +547,16 @@ ul.admin-menu-tree-page-tree span.child-count {
 	/* clear: both; */
 	float: left;
 	width: 100%;
-	-moz-user-select: text !important;
+	/* -moz-user-select: text !important; */
 }
-.amtpv-editpopup-addpages-names-ul span {
+#adminmenu li .amtpv-editpopup-addpages-names-ul span {
 	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -3px -228px;
 	margin-top: 7px;
 	margin-right: 3px;
 	float: left;
 	width: 6px;
 	height: 10px;
+	cursor: move;
 }
 .amtpv-editpopup-addpages-names-ul span:hover {
 	/* background-image: url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png); */
@@ -555,4 +583,18 @@ ul.admin-menu-tree-page-tree span.child-count {
 
 .ui-nestedSortable-error {
 	border: 1px solid red;
+}
+
+ul.amtpv-editpopup-addpages-names-ul .ui-state-highlight {
+	display: block;
+}
+
+.amtpv-draghandle {
+	display: none;
+	position: absolute;
+	width: 7px;
+	height: 8px;
+	left: 0;
+	top: 5px;
+	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -5px -228px;
 }
