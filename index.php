@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
-Version: 2.2
+Version: 2.3
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -38,7 +38,7 @@ add_action('wp_ajax_admin_menu_tree_page_view_move_page', 'admin_menu_tree_page_
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "2.2" );
+	define( "admin_menu_tree_page_view_VERSION", "2.3" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 	define( "admin_menu_tree_page_view_DIR", WP_PLUGIN_DIR . '/admin-menu-tree-page-view/' );
 
@@ -64,6 +64,40 @@ function admin_menu_tree_page_view_admin_head() {
 
 }
 
+/**
+ * I know, I know. Should have made a class from the beginning...
+ */
+class admin_menu_tree_page_view {
+	
+	public static $arr_all_pages_id_parent;
+	public static $one_page_parents;
+	
+	static function get_all_pages_id_parent() {
+		if (!isset(admin_menu_tree_page_view::$arr_all_pages_id_parent)) {
+			// get all pages, once, to spare some queries looking for children
+			$all_pages = get_posts(array(
+				"numberposts" 	=> -1,
+				"post_type"		=> "page",
+				"post_status" 	=> "any",
+				"fields"		=> "id=>parent"
+			));
+			//print_r($all_pages);exit;
+			admin_menu_tree_page_view::$arr_all_pages_id_parent = $all_pages;
+		}
+		return admin_menu_tree_page_view::$arr_all_pages_id_parent;
+	}
+	
+	static function get_post_ancestors($post_to_check_parents_for) {
+		if (!isset(admin_menu_tree_page_view::$one_page_parents)) {
+			wp_cache_delete($post_to_check_parents_for, 'posts');
+			$one_page_parents = get_post_ancestors($post_to_check_parents_for);
+			admin_menu_tree_page_view::$one_page_parents = $one_page_parents;
+		}
+		return admin_menu_tree_page_view::$one_page_parents;
+	}
+	
+}
+
 function admin_menu_tree_page_view_get_pages($args) {
 
 	$defaults = array(
@@ -78,6 +112,9 @@ function admin_menu_tree_page_view_get_pages($args) {
 	);
 	$args = wp_parse_args( $args, $defaults );
 
+	// contains all page ids as keys and their parent as the val
+	$arr_all_pages_id_parent = admin_menu_tree_page_view::get_all_pages_id_parent();
+
 	$pages = get_posts($args);
 	$output = "";
 	$str_child_output = "";
@@ -87,14 +124,21 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$title = esc_html($title);
 		
 		// add num of children to the title
-		$post_children = get_children(array(
-			"post_parent" => $one_page->ID,
-			"post_type" => "page"
-		));
-		$post_children_count = sizeof($post_children);
-		// var_dump($post_children_count);
-		if ($post_children_count>0) {
+		// @done: this is still being done for each page, even if it does not have children. can we check if it has before?
+		// we could fetch all pages once and store them in an array and then just check if the array has our id in it. yeah. let's do that.
+		// if our page id exists in $arr_all_pages_id_parent and has a value
+		// so result is from 690 queries > 474 = 216 queries less. still many..
+		// from 474 to 259 = 215 less
+		// so total from 690 to 259 = 431 queries less! grrroooovy
+		if (in_array($one_page->ID, $arr_all_pages_id_parent)) {
+			$post_children = get_children(array(
+				"post_parent" => $one_page->ID,
+				"post_type" => "page"
+			));
+			$post_children_count = sizeof($post_children);
 			$title .= " <span class='child-count'>($post_children_count)</span>";
+		} else {
+			$post_children_count = 0;
 		}
 		
 		$class = "";
@@ -114,8 +158,13 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$args_childs["parent"] = $one_page->ID;
 		$args_childs["post_parent"] = $one_page->ID;
 		$args_childs["child_of"] = $one_page->ID;
-		$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
+
+		// can we run this only if the page actually has children? is there a property in the result of get_children for this?
+		// eh, you moron, we already got that info in $post_children_count!
+		// so result is from 690 queries > 474 = 216 queries less. still many..
+		$str_child_output = "";
 		if ($post_children_count>0) {
+			$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
 			$class .= " admin-menu-tree-page-view-has-childs";
 		}
 		
@@ -134,8 +183,10 @@ function admin_menu_tree_page_view_get_pages($args) {
 				// seems to be a problem with get_post_ancestors (yes, it's in the trac too)
 				// Long time since I wrote this, but perhaps this is the problem (adding for future reference):
 				// http://core.trac.wordpress.org/ticket/10381
-				wp_cache_delete($post_to_check_parents_for, 'posts');
-				$one_page_parents = get_post_ancestors($post_to_check_parents_for);
+				
+				// @done: this is done several times. only do it once please
+				// before: 441. after: 43
+				$one_page_parents = admin_menu_tree_page_view::get_post_ancestors($post_to_check_parents_for);
 				if (in_array($one_page->ID, $one_page_parents)) {
 					$isOpened = TRUE;
 				}

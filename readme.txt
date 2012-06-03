@@ -3,8 +3,8 @@ Contributors: eskapism, MarsApril
 Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
-Tested up to: 3.2.1
-Stable tag: 2.2
+Tested up to: 3.3
+Stable tag: 2.3
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
 
@@ -41,6 +41,10 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.3 =
+- Fixed: major speedup, like 300 % faster generation of the tree
+- Fixed: added is_admin()-check to the plugin, the plugin code is only parsed when in the administration panel. This could make the public part of your site some milliseconds faster.
 
 = 2.2 =
 - Fixed: icons where misplaced when using minimized admin menu.
