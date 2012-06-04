@@ -4,7 +4,7 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, tree, view, admin menu, menu
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 2.3
+Stable tag: 2.4
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
 
@@ -41,6 +41,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.4 =
+- Fix for flyout menu not working
 
 = 2.3 =
 - Fixed: major speedup, like 300 % faster generation of the tree

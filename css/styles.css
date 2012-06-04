@@ -598,3 +598,8 @@ ul.amtpv-editpopup-addpages-names-ul .ui-state-highlight {
 	top: 5px;
 	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_222222_256x240.png) no-repeat -5px -228px;
 }
+
+/* fix from wordpress.org/support/topic/plugin-admin-menu-tree-page-view-flyout-menus-broken-in-wp-33 */
+#adminmenuwrap #adminmenu #menu-pages .wp-submenu {
+	overflow: visible !important;
+}
