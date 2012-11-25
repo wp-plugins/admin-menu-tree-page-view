@@ -1,20 +1,28 @@
 === Admin Menu Tree Page View ===
 Contributors: eskapism, MarsApril
 Donate link: http://eskapism.se/sida/donate/
-Tags: admin, page, pages, tree, view, admin menu, menu
+Tags: admin, page, pages, page tree, hierarchy, cms, tree, view, admin menu, menu, change order, drag and drop
 Requires at least: 3.0
-Tested up to: 3.3
-Stable tag: 2.4
+Tested up to: 3.5
+Stable tag: 2.5
 
-Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages - all with just one click away!
+Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages – all is just one click away!
 
 == Description ==
 
-This WordPress plugin adds all your pages to the admin menu, so all your pages will always be available within just one click, 
-no matter where you are in the admin area. You can also add pages directly in the tree and you can
-quickly find your pages by using the search box.
+The Admin Menu Tree Page View WordPress plugin adds a page tree to all your pages – directly accessible in the admin menu. 
+This way all your pages will be available within just one click, 
+no matter where you are in the admin area. 
 
-**Version 2.0 update:** Now you can order your pages with drag-and-drop!
+You can also add pages directly in the tree and you can quickly find your pages by using the search box.
+
+#### Top features
+* Change the order of your pages with drag-and-drop
+* View all your pages – no matter where in the admin you are
+* View the page hierarchy/the tree structure of your pages
+* Compatible with WPML, so if you in WPML's language menu have selected to view german pages, then only the german pages will vi visible in the admin menu tree too.
+* Add pages directly after or inside another post – no need to first create the post and then select the parent of the page
+* Adds link to view a page directly from the admin menu – you don't have to first edit the post and from that page click the view link
 
 Works perfect in CMS-like WordPress installations with lots of pages in a tree hierarchy.
 
@@ -41,6 +49,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.5 =
+- Fix for search highlight being to big
 
 = 2.4 =
 - Fix for flyout menu not working

@@ -311,23 +311,25 @@ span.admin-menu-tree-page-tree_headline {
 ul.admin-menu-tree-page-tree .highlight {
 	background-color: #fff879;
 	color: #21759B;
+	margin: 0;
+	padding: 0;
 }
 
 
 ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {
 	display: block;
 	position: absolute;
-	left: 0px;
+	left: 0;
 	top: 1px;
 	width: 17px;
 	height: 14px;
 }
 ul.admin-menu-tree-page-tree ul .admin-menu-tree-page-expand {
-	top: 0px;
+	top: 0;
 	left: 9px;
 }
 ul.admin-menu-tree-page-tree ul ul .admin-menu-tree-page-expand {
-	top: 0px;
+	top: 0;
 	left: 17px;
 }
 ul.admin-menu-tree-page-tree ul ul ul .admin-menu-tree-page-expand {
