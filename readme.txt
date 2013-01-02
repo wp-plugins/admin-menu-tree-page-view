@@ -50,11 +50,10 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 == Changelog ==
 
-= 2.x =
+= 2.6 =
 - Fixes for popup on WP 3.5
-- Replaces live() with on() in JavaScript
+- Replaced live() with on() for jQuery
 - Small CSS fixes, for example search box label being a bit off
-- 
 
 = 2.5 =
 - Fix for search highlight being to big

@@ -272,10 +272,13 @@ jQuery(function($) {
 	});
 	
 	// cancel-link
-	trees.on("click", "a.amtpv-editpopup-addpages-cancel", function() {
-		var t = $(this);
-		var popup = t.closest("div.amtpv-editpopup");
-		var linkwrap = popup.closest("div.amtpv-linkwrap");
+	trees.on("click", "a.amtpv-editpopup-addpages-cancel", function(e) {
+
+		e.preventDefault();
+
+		var t = $(this),
+			popup = t.closest("div.amtpv-editpopup"),
+			linkwrap = popup.closest("div.amtpv-linkwrap");
 		
 		popup.find(".amtpv-editpopup-addpages").hide().remove();
 		popup.find("> div").show();
