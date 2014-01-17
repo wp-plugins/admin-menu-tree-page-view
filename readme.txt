@@ -29,6 +29,16 @@ Works perfect in CMS-like WordPress installations with lots of pages in a tree h
 If you want a tree with all your pages, but don't want it visible all the time, please check out my other plugin
 [CMS Tree Page View](http://wordpress.org/extend/plugins/cms-tree-page-view/).
 
+#### Languages/translations
+
+The plugin is translated into these languages:
+
+- Spanish (thanks to Andrew Kurtis/[WebHostingHub](http://www.webhostinghub.com/))
+- Slovak translation (thanks Branco)
+- Italian
+- Dutch
+- Swedish 
+
 #### Donation and more plugins
 * If you like this plugin don't forget to [donate to support further development](http://eskapism.se/sida/donate/).
 * Check out some [more WordPress CMS Plugins](http://wordpress.org/extend/plugins/profile/eskapism) by the same author.
