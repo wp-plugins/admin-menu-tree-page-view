@@ -3,8 +3,8 @@ Contributors: eskapism, MarsApril
 Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, page tree, hierarchy, cms, tree, view, admin menu, menu, change order, drag and drop
 Requires at least: 3.8
-Tested up to: 3.8
-Stable tag: 2.6.7
+Tested up to: 3.8.1
+Stable tag: 2.6.8
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages – all is just one click away!
 
@@ -59,6 +59,9 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.6.8 =
+- Added German translation. Thanks [Michael Thielemann](www.thielemann.eu).
 
 = 2.6.7 =
 - Added Spanish translation. Thanks Andrew Kurtis/[WebHostingHub](http://www.webhostinghub.com/).
