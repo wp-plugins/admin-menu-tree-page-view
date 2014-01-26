@@ -61,7 +61,7 @@ Now the tree with the pages will be visible in the admin menu to the left.
 == Changelog ==
 
 = 2.6.8 =
-- Added German translation. Thanks [Michael Thielemann](www.thielemann.eu).
+- Added German translation. Thanks [Michael Thielemann](http://www.thielemann.eu).
 
 = 2.6.7 =
 - Added Spanish translation. Thanks Andrew Kurtis/[WebHostingHub](http://www.webhostinghub.com/).
