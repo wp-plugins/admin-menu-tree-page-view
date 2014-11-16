@@ -4,15 +4,15 @@ Donate link: http://eskapism.se/sida/donate/
 Tags: admin, page, pages, page tree, hierarchy, cms, tree, view, admin menu, menu, change order, drag and drop
 Requires at least: 3.8
 Tested up to: 3.8.1
-Stable tag: 2.6.8
+Stable tag: 2.6.9
 
 Get a tree view of all your pages directly in the admin menu. Search, edit, view, re-order/sort and add pages – all is just one click away!
 
 == Description ==
 
-The Admin Menu Tree Page View WordPress plugin adds a page tree to all your pages – directly accessible in the admin menu. 
-This way all your pages will be available within just one click, 
-no matter where you are in the admin area. 
+The Admin Menu Tree Page View WordPress plugin adds a page tree to all your pages – directly accessible in the admin menu.
+This way all your pages will be available within just one click,
+no matter where you are in the admin area.
 
 You can also add pages directly in the tree and you can quickly find your pages by using the search box.
 
@@ -37,7 +37,7 @@ The plugin is translated into these languages:
 - Slovak translation (thanks Branco)
 - Italian
 - Dutch
-- Swedish 
+- Swedish
 
 #### Donation and more plugins
 * If you like this plugin don't forget to [donate to support further development](http://eskapism.se/sida/donate/).
@@ -59,6 +59,10 @@ Now the tree with the pages will be visible in the admin menu to the left.
 
 
 == Changelog ==
+
+= 2.6.9 =
+- Make hidden page not clickable. Fixes https://wordpress.org/support/topic/hide-the-page
+- Load icons localy instead. Fixes https://wordpress.org/support/topic/styles-loading-icon-pngs-over-http-instead-of-https
 
 = 2.6.8 =
 - Added German translation. Thanks [Michael Thielemann](http://www.thielemann.eu).
