@@ -282,7 +282,7 @@ span.admin-menu-tree-page-tree_headline {
 	display: none;
 	width: 16px;
 	height: 16px;
-	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -32px -194px;	
+	background: transparent url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/ui-darkness/images/ui-icons_cccccc_256x240.png) no-repeat -32px -194px;
 	position: absolute;
 	top: 5px;
 	right: 15px;
@@ -516,7 +516,7 @@ ul.admin-menu-tree-page-tree span.child-count {
 	background: rgba(0,0,0,.3);
 }
 
-.amtpv-editpopup-is-working {	
+.amtpv-editpopup-is-working {
 	background: rgba(46, 162, 204, .3);
 }
 .amtpv-editpopup-is-working > a {
@@ -608,4 +608,11 @@ ul.amtpv-editpopup-addpages-names-ul .ui-state-highlight {
 #adminmenuwrap #adminmenu #menu-pages .wp-submenu,
 #adminmenu .wp-submenu li {
 	overflow: visible !important;
+}
+
+/* fix from https://wordpress.org/support/topic/hide-the-page?replies=2#post-6173092,
+ * to avoid accidental clicks on the admin-menu-tree-page-tree link
+ */
+a[href="edit.php?post_type=page&page=admin-menu-tree-page-tree"] {
+	display:none !important;
 }
