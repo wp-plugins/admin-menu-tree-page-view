@@ -3,7 +3,7 @@
 Plugin Name: Admin Menu Tree Page View
 Plugin URI: http://eskapism.se/code-playground/admin-menu-tree-page-view/
 Description: Get a tree view of all your pages directly in the admin menu. Search, edit, view and add pages - all with just one click away!
-Version: 2.5
+Version: 2.6.9
 Author: Pär Thernström
 Author URI: http://eskapism.se/
 License: GPL2
@@ -12,7 +12,7 @@ License: GPL2
 /*  Copyright 2010  Pär Thernström (email: par.thernstrom@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -38,17 +38,35 @@ add_action('wp_ajax_admin_menu_tree_page_view_move_page', 'admin_menu_tree_page_
 
 function admin_menu_tree_page_view_admin_init() {
 
-	define( "admin_menu_tree_page_view_VERSION", "2.5" );
+	define( "admin_menu_tree_page_view_VERSION", "2.6.9" );
 	define( "admin_menu_tree_page_view_URL", WP_PLUGIN_URL . '/admin-menu-tree-page-view/' );
 	define( "admin_menu_tree_page_view_DIR", WP_PLUGIN_DIR . '/admin-menu-tree-page-view/' );
 
-	wp_enqueue_style("admin_menu_tree_page_view_styles", admin_menu_tree_page_view_URL . "css/styles.css", false, admin_menu_tree_page_view_VERSION);
-	wp_enqueue_script("jquery.highlight", admin_menu_tree_page_view_URL . "js/jquery.highlight.js", array("jquery"));
-	wp_enqueue_script("jquery-cookie", admin_menu_tree_page_view_URL . "js/jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
-	wp_enqueue_script("jquery.ui.nestedSortable", admin_menu_tree_page_view_URL . "js/jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
-	wp_enqueue_script("jquery.client", admin_menu_tree_page_view_URL . "js/jquery.client.js", array("jquery"));
+	// Find the plugin directory URL
+	$aa = __FILE__;
+	if ( isset( $mu_plugin ) ) {
+		$aa = $mu_plugin;
+	}
+	if ( isset( $network_plugin ) ) {
+		$aa = $network_plugin;
+	}
+	if ( isset( $plugin ) ) {
+		$aa = $plugin;
+	}
+	$plugin_dir_url = plugin_dir_url(basename($aa)) . 'admin-menu-tree-page-view/';
+
+	define( "ADMIN_MENU_TREE_PAGE_VIEW_URL", $plugin_dir_url);
+
+	wp_enqueue_style("admin_menu_tree_page_view_styles", ADMIN_MENU_TREE_PAGE_VIEW_URL . "css/styles.css", false, admin_menu_tree_page_view_VERSION);
+	wp_enqueue_script("jquery.highlight", ADMIN_MENU_TREE_PAGE_VIEW_URL . "js/jquery.highlight.js", array("jquery"));
+	wp_enqueue_script("jquery-cookie", ADMIN_MENU_TREE_PAGE_VIEW_URL . "js/jquery.biscuit.js", array("jquery")); // renamed from cookie to fix problems with mod_security
+	wp_enqueue_script("jquery.ui.nestedSortable", ADMIN_MENU_TREE_PAGE_VIEW_URL . "js/jquery.ui.nestedSortable.js", array("jquery", "jquery-ui-sortable"));
+	wp_enqueue_script("jquery.client", ADMIN_MENU_TREE_PAGE_VIEW_URL . "js/jquery.client.js", array("jquery"));
 	wp_enqueue_script("jquery-ui-sortable");
-	wp_enqueue_script("admin_menu_tree_page_view", admin_menu_tree_page_view_URL . "js/scripts.js", array("jquery"));
+	wp_enqueue_script("admin_menu_tree_page_view", ADMIN_MENU_TREE_PAGE_VIEW_URL . "js/scripts.js", array("jquery"));
+
+	// The way CMS TPV does it:
+	// wp_enqueue_script( "jquery-cookie", CMS_TPV_URL . "scripts/jquery.biscuit.js", array("jquery"));
 
 	$oLocale = array(
 		"Edit" => __("Edit", 'admin-menu-tree-page-view'),
@@ -68,10 +86,10 @@ function admin_menu_tree_page_view_admin_head() {
  * I know, I know. Should have made a class from the beginning...
  */
 class admin_menu_tree_page_view {
-	
+
 	public static $arr_all_pages_id_parent;
 	public static $one_page_parents;
-	
+
 	static function get_all_pages_id_parent() {
 		if (!isset(admin_menu_tree_page_view::$arr_all_pages_id_parent)) {
 			// get all pages, once, to spare some queries looking for children
@@ -86,16 +104,21 @@ class admin_menu_tree_page_view {
 		}
 		return admin_menu_tree_page_view::$arr_all_pages_id_parent;
 	}
-	
+
 	static function get_post_ancestors($post_to_check_parents_for) {
-		if (!isset(admin_menu_tree_page_view::$one_page_parents)) {
+
+		if ( ! isset(admin_menu_tree_page_view::$one_page_parents) ) {
+
 			wp_cache_delete($post_to_check_parents_for, 'posts');
 			$one_page_parents = get_post_ancestors($post_to_check_parents_for);
 			admin_menu_tree_page_view::$one_page_parents = $one_page_parents;
+
 		}
+
 		return admin_menu_tree_page_view::$one_page_parents;
+
 	}
-	
+
 }
 
 function admin_menu_tree_page_view_get_pages($args) {
@@ -122,7 +145,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$edit_link = get_edit_post_link($one_page->ID);
 		$title = get_the_title($one_page->ID);
 		$title = esc_html($title);
-		
+
 		// add num of children to the title
 		// @done: this is still being done for each page, even if it does not have children. can we check if it has before?
 		// we could fetch all pages once and store them in an array and then just check if the array has our id in it. yeah. let's do that.
@@ -140,7 +163,7 @@ function admin_menu_tree_page_view_get_pages($args) {
 		} else {
 			$post_children_count = 0;
 		}
-		
+
 		$class = "";
 		if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["post"]) && $_GET["post"] == $one_page->ID) {
 			$class = "current";
@@ -167,40 +190,46 @@ function admin_menu_tree_page_view_get_pages($args) {
 			$str_child_output = admin_menu_tree_page_view_get_pages($args_childs);
 			$class .= " admin-menu-tree-page-view-has-childs";
 		}
-		
+
 		// determine if ul should be opened or closed
 		$isOpened = FALSE;
-		
+
 		// check cookie first
 		$cookie_opened = isset($_COOKIE["admin-menu-tree-page-view-open-posts"]) ? $_COOKIE["admin-menu-tree-page-view-open-posts"] : ""; // 2,95,n
 		$cookie_opened = explode(",", $cookie_opened);
 
 		// if we are editing a post, we should see it in the tree, right?
-		if ( isset($_GET["action"]) && "edit" == $_GET["action"] && isset($_GET["post"])) {
+		// don't use on bulk edit, then post is an array and not a single post id
+		if ( isset($_GET["action"]) && "edit" == $_GET["action"] && isset($_GET["post"]) && is_integer($_GET["post"]) ) {
+
 			// if post with id get[post] is a parent of the current post, show it
-			if ($_GET["post"] != $one_page->ID) {
+			if ( $_GET["post"] != $one_page->ID ) {
+
 				$post_to_check_parents_for = $_GET["post"];
+
 				// seems to be a problem with get_post_ancestors (yes, it's in the trac too)
 				// Long time since I wrote this, but perhaps this is the problem (adding for future reference):
 				// http://core.trac.wordpress.org/ticket/10381
-				
+
 				// @done: this is done several times. only do it once please
 				// before: 441. after: 43
 				$one_page_parents = admin_menu_tree_page_view::get_post_ancestors($post_to_check_parents_for);
 				if (in_array($one_page->ID, $one_page_parents)) {
 					$isOpened = TRUE;
 				}
+
 			}
+
 		}
 
 		if (in_array($one_page->ID, $cookie_opened) || $isOpened && $post_children_count>0) {
 			$class .= " admin-menu-tree-page-view-opened";
 		} elseif ($post_children_count>0) {
 			$class .= " admin-menu-tree-page-view-closed";
-		}		
-		
+		}
+
 		$class .= " nestedSortable";
-		
+
 		$output .= "<li class='$class'>";
 		// first div used for nestedSortable
 		$output .= "<div>";
@@ -218,19 +247,19 @@ function admin_menu_tree_page_view_get_pages($args) {
 		$output .= "<span class='amtpv-draghandle'></span>";
 
 		$output .= "</a>";
-		
-		
+
+
 		// popup edit div
 		$output .= "
 			<div class='amtpv-editpopup'>
 				<div class='amtpv-editpopup-editview'>
 					<div class='amtpv-editpopup-edit' data-link='".$edit_link."'>".__("Edit", 'admin-menu-tree-page-view')."</div>
-					 | 
+					 |
 					<div class='amtpv-editpopup-view' data-link='".$permalink."'>".__("View", 'admin-menu-tree-page-view')."</div>
 				</div>
 				<div class='amtpv-editpopup-add'>".__("Add new page", 'admin-menu-tree-page-view')."<br />
 					<div class='amtpv-editpopup-add-after'>".__("After", 'admin-menu-tree-page-view')."</div>
-					 | 
+					 |
 					<div class='amtpv-editpopup-add-inside'>".__("Inside", 'admin-menu-tree-page-view')."</div>
 				</div>
 				<div class='amtpv-editpopup-postid'>".__("Post ID:", 'admin-menu-tree-page-view')." " . $one_page->ID."</div>
@@ -245,15 +274,15 @@ function admin_menu_tree_page_view_get_pages($args) {
 
 		// add child articles
 		$output .= $str_child_output;
-		
+
 		$output .= "</li>";
 	}
-	
+
 	// if this is a child listing, add ul
 	if (isset($args["child_of"]) && $args["child_of"] && $output != "") {
 		$output = "<ul class='admin-menu-tree-page-tree_childs'>$output</ul>";
 	}
-	
+
 	return $output;
 }
 
@@ -287,7 +316,7 @@ function admin_menu_tree_page_view_admin_menu() {
 	);
 
 	$output .= admin_menu_tree_page_view_get_pages($args);
-	
+
 	// end our ul and add the a-tag that wp automatically will close
 	$output .= "
 		</ul>
@@ -301,10 +330,10 @@ function admin_menu_tree_page_view_admin_menu() {
 
 function admin_menu_tree_page_page() {
 	?>
-	
+
 	<h2>Admin Menu Tree Page View</h2>
 	<p>Nothing to see here. Move along! :)</p>
-	
+
 	<?php
 }
 
@@ -321,7 +350,7 @@ function admin_menu_tree_page_view_add_page() {
 
 	/*
 	(
-	[action] => cms_tpv_add_page 
+	[action] => cms_tpv_add_page
 	[pageID] => cms-tpv-1318
 	type
 	)
@@ -351,13 +380,13 @@ function admin_menu_tree_page_view_add_page() {
 
 		if (!function_exists("admin_menu_tree_page_view_add_page_after")) {
 		function admin_menu_tree_page_view_add_page_after($ref_post_id, $page_title, $post_type, $post_status = "draft") {
-			
+
 			global $wpdb;
-			
+
 			$ref_post = get_post($ref_post_id);
 			// update menu_order of all pages below our page
 			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+2 WHERE post_parent = %d AND menu_order >= %d AND id <> %d ", $ref_post->post_parent, $ref_post->menu_order, $ref_post->ID ) );
-			
+
 			// create a new page and then goto it
 			$post_new = array();
 			$post_new["menu_order"] = $ref_post->menu_order+1;
@@ -371,7 +400,7 @@ function admin_menu_tree_page_view_add_page() {
 			return $newPostID;
 		}
 		}
-		
+
 		$ref_post_id = $ref_post->ID;
 		$loopNum = 0;
 		foreach ($page_titles as $one_page_title) {
@@ -383,7 +412,7 @@ function admin_menu_tree_page_view_add_page() {
 			}
 			$loopNum++;
 		}
-		
+
 
 	} else if ( "inside" == $type ) {
 
@@ -394,12 +423,12 @@ function admin_menu_tree_page_view_add_page() {
 		function admin_menu_tree_page_view_add_page_inside($ref_post_id, $page_title, $post_type, $post_status = "draft") {
 
 			global $wpdb;
-			
+
 			$ref_post = get_post($ref_post_id);
 
 			// update menu_order, so our new post is the only one with order 0
-			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE post_parent = %d", $ref_post->ID) );		
-	
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE post_parent = %d", $ref_post->ID) );
+
 			$post_new = array();
 			$post_new["menu_order"] = 0;
 			$post_new["post_parent"] = $ref_post->ID;
@@ -410,10 +439,10 @@ function admin_menu_tree_page_view_add_page() {
 			$post_new["post_type"] = $post_type;
 			$newPostID = wp_insert_post($post_new);
 			return $newPostID;
-		
+
 		}
 		}
-		
+
 		// add reversed
 		$ref_post_id = $ref_post->ID;
 		$page_titles = array_reverse($page_titles);
@@ -430,7 +459,7 @@ function admin_menu_tree_page_view_add_page() {
 		$post_id_to_return = $newPostID;
 
 	}
-	
+
 	if ($post_id_to_return) {
 		// return editlink for the newly created page
 		$editLink = get_edit_post_link($post_id_to_return, '');
@@ -466,25 +495,25 @@ function admin_menu_tree_page_view_move_page() {
 	/*
 	 the node that was moved,
 	 the reference node in the move,
-	 the new position relative to the reference node (one of "before", "after" or "inside"), 
+	 the new position relative to the reference node (one of "before", "after" or "inside"),
 	 	inside = man placerar den under en sida som inte har några barn?
 	*/
 
 	global $wpdb;
-	
+
 	$node_id = (int) $_POST["post_to_update_id"]; // the node that was moved
 	$ref_node_id = (int) $_POST["aboveOrNextPostID"];
 	$type = $_POST["direction"];
-	
+
 	$_POST["skip_sitepress_actions"] = true; // sitepress.class.php->save_post_actions
-	
+
 	if ($node_id && $ref_node_id) {
 		#echo "\nnode_id: $node_id";
-		#echo "\ntype: $type";	
-		
+		#echo "\ntype: $type";
+
 		$post_node = get_post($node_id);
 		$post_ref_node = get_post($ref_node_id);
-		
+
 		// first check that post_node (moved post) is not in trash. we do not move them
 		if ($post_node->post_status == "trash") {
 			exit;
@@ -492,7 +521,7 @@ function admin_menu_tree_page_view_move_page() {
 
 		if ( "inside" == $type ) {
 			// note: inside does not exist for Admin Menu Tree Page View
-			
+
 			// post_node is moved inside ref_post_node
 			// add ref_post_node as parent to post_node and set post_nodes menu_order to 0
 			// @todo: shouldn't menu order of existing items be changed?
@@ -502,11 +531,11 @@ function admin_menu_tree_page_view_move_page() {
 				"post_parent" => $post_ref_node->ID
 			);
 			wp_update_post( $post_to_save );
-			
+
 			echo "did inside";
-			
+
 		} elseif ( "up" == $type ) {
-		
+
 			// post_node is placed before ref_post_node
 			// update menu_order of all pages with a menu order more than or equal ref_node_post and with the same parent as ref_node_post
 			// we do this so there will be room for our page if it's the first page
@@ -516,7 +545,7 @@ function admin_menu_tree_page_view_move_page() {
 			// update menu order with +1 for all pages below ref_node, this should fix the problem with "unmovable" pages because of
 			// multiple pages with the same menu order (...which is not the fault of this plugin!)
 			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+1 WHERE menu_order >= %d", $post_ref_node->menu_order+1) );
-			
+
 			$post_to_save = array(
 				"ID" => $post_node->ID,
 				"menu_order" => $post_ref_node->menu_order,
@@ -527,9 +556,9 @@ function admin_menu_tree_page_view_move_page() {
 			echo "did before";
 
 		} elseif ( "down" == $type ) {
-		
+
 			// post_node is placed after ref_post_node
-			
+
 			// update menu_order of all posts with the same parent ref_post_node and with a menu_order of the same as ref_post_node, but do not include ref_post_node
 			// +2 since multiple can have same menu order and we want our moved post to have a unique "spot"
 			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET menu_order = menu_order+2 WHERE post_parent = %d AND menu_order >= %d AND id <> %d ", $post_ref_node->post_parent, $post_ref_node->menu_order, $post_ref_node->ID ) );
@@ -543,18 +572,16 @@ function admin_menu_tree_page_view_move_page() {
 				"post_parent" => $post_ref_node->post_parent
 			);
 			wp_update_post( $post_to_save );
-			
+
 			echo "did after";
 		}
-		
+
 		#echo "ok"; // I'm done here!
-		
+
 	} else {
 		// error
-	}	
+	}
 	echo 1;
 	die();
 
 } // move post
-
-
